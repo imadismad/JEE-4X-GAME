@@ -19,4 +19,24 @@
     <servlet-name>HelloWorld</servlet-name>
     <url-pattern>/api</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>Creation</display-name>
+    <servlet-name>Creation</servlet-name>
+    <servlet-class>controlers.compte.Creation</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Creation</servlet-name>
+    <url-pattern>/compte/creation</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>Connexion</display-name>
+    <servlet-name>Connexion</servlet-name>
+    <servlet-class>controlers.compte.Connexion</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Connexion</servlet-name>
+    <url-pattern>/compte/connexion</url-pattern>
+  </servlet-mapping>
 </web-app>
