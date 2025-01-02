@@ -1,0 +1,138 @@
+/* Reset margin and padding for all elements */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Style global */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* Header style */
+.header-container {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Slight shadow for separation */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.header-container h1 {
+    font-size: 24px;
+    color: #333;
+}
+
+.header-container nav {
+    margin-top: 10px;
+}
+
+.header-container nav a {
+    color: #007bff;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.header-container nav a:hover {
+    text-decoration: underline;
+}
+
+/* Main content container */
+.main-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 400px;
+    width: 90%; /* Adjusted for responsiveness */
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Footer style */
+.footer-container {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 10px 20px;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Slight shadow for separation */
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+
+.footer-container p {
+    margin: 0;
+}
+
+/* Form elements */
+form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+form input[type="text"],
+form input[type="password"] {
+    width: calc(100% - 10px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Focus effect for inputs */
+form input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Submit button */
+form button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+/* Style pour les paragraphes sous les formulaires */
+form + p {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Style pour les liens */
+form + p a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+form + p a:hover {
+    text-decoration: underline;
+}
+
