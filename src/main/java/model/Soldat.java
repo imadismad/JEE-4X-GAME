@@ -10,15 +10,15 @@ public class Soldat {
     private Partie partie;
 
     public Soldat(int x, int y, Joueur joueur, Partie partie) {
-        this.vie = 3;
+        this.vie = 15;
         this.x = x;
         this.y = y;
         this.joueur = joueur;
         this.partie = partie;
     }
     
-    public void perdreVie() {
-    	vie--;
+    public void perdreVie(int pv) {
+    	vie = vie-pv;
     }
     
     public void soin() {
@@ -48,25 +48,29 @@ public class Soldat {
             return;
         }
 
-        Tuile cible = joueur.getPartie().getTuile(nx, ny); // Suppose qu'un soldat a un lien vers son joueur et sa partie.
+        Tuile cible = joueur.getPartie().getTuile(nx, ny);
+
         if (cible instanceof Montagne) {
             System.out.println("Impossible de se déplacer sur une montagne. Réessayez.");
             return;
         }
 
-        //TODO VERIFIER LE CAS OU LE SOLDAT EST SUR UNE CASE VIDE
-        
-        // Vérification des interactions avec le contenu de la case
+        // Gestion des interactions avec un soldat sur la tuile cible
+        System.out.println("Vérification d'un soldat.");
         if (cible.contientSoldat(this.partie)) {
+            System.out.println("Soldat détecté.");
             Soldat soldatCible = cible.getSoldat(this.partie);
             if (soldatCible.getJoueur() != this.joueur) {
                 System.out.println("Attaque du soldat ennemi !");
-                soldatCible.perdreVie();
+                int forceAttaque = (int) (Math.random() * 6) + 1;
+                System.out.println("Force d'attaque contre le soldat : " + forceAttaque);
+
+                soldatCible.perdreVie(forceAttaque);
                 if (soldatCible.estMort()) {
                     System.out.println("Soldat ennemi éliminé. Vous prenez sa place.");
-                    joueur.retirerSoldat(soldatCible);
+                    soldatCible.getJoueur().retirerSoldat(soldatCible);
                 } else {
-                    System.out.println("Soldat ennemi encore en vie. Déplacement annulé.");
+                    System.out.println("Soldat ennemi encore en vie.");
                     dep = false;
                 }
             } else {
@@ -75,30 +79,35 @@ public class Soldat {
             }
         }
 
+        // Gestion des interactions avec une ville sur la tuile cible
         if (cible instanceof Ville) {
-            Ville ville = (Ville)cible;
+            Ville ville = (Ville) cible;
             if (ville.getAppartenance() != this.joueur) {
                 System.out.println("Attaque de la ville ennemie !");
-                ville.loseDP();
-                if (ville.getDP()<=0) {
-                	System.out.println("Capture de la ville.");
-                	ville.setAppartenance(this.getJoueur());
+                int forceAttaqueVille = (int) (Math.random() * 6) + 1;
+                System.out.println("Force d'attaque contre la ville : " + forceAttaqueVille);
+
+                ville.loseDP(forceAttaqueVille);
+                if (ville.getDP() <= 0) {
+                    System.out.println("Ville capturée !");
+                    ville.setAppartenance(this.getJoueur());
                 } else {
-                	System.out.println("Points de Defense restants : " + ville.getDP());
-                	dep = false;
+                    System.out.println("Points de Défense restants : " + ville.getDP());
+                    dep = false;
                 }
             } else {
-                System.out.println("Vous ne pouvez pas attaquer une ville alliée.");
+                System.out.println("Ville alliée détectée. Pas d'attaque possible.");
             }
         }
 
-        // Déplacement normal
-        if (dep != false) {
-        	this.setX(nx);
-        	this.setY(ny);
-        	System.out.println("Soldat déplacé en direction de " + direction + " vers (" + nx + ", " + ny + ")");
+        // Déplacement normal si aucune contrainte n'annule l'action
+        if (dep) {
+            this.setX(nx);
+            this.setY(ny);
+            System.out.println("Soldat déplacé en direction de " + direction + " vers (" + nx + ", " + ny + ")");
         }
     }
+
 
 
     public boolean attaquer(Direction direction) {

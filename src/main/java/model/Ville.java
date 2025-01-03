@@ -7,7 +7,7 @@ public class Ville extends Tuile {
     public Ville() {
         this.type = "Ville";
         this.appartenance = null;
-        this.DP = 3;
+        this.DP = 15;
     }
 
     @Override
@@ -36,8 +36,8 @@ public class Ville extends Tuile {
         this.DP = dp;
     }
     
-    public void loseDP() {
-    	this.DP--;
+    public void loseDP(int att) {
+    	this.DP=DP-att;
     }
 
 }

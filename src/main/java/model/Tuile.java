@@ -28,6 +28,11 @@ public abstract class Tuile {
         return false;
     }
     
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+    
     public Soldat getSoldat(Partie partie) {
         for (Soldat soldat : partie.getSoldats()) {
             if (soldat.getX() == this.x && soldat.getY() == this.y) {

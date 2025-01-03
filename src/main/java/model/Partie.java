@@ -121,13 +121,14 @@ public class Partie {
             for (int j = 0; j < MAX_Y; j++) {
                 if (tuiles[i][j] == null) { // Si la tuile n'a pas encore été assignée
                     double random = Math.random();
-                    if (random < 0.3) {
+                    if (random < 0.15) {
                         tuiles[i][j] = new Montagne();
-                    } else if (random < 0.6) {
+                    } else if (random < 0.5) {
                         tuiles[i][j] = new Foret();
                     } else {
-                        tuiles[i][j] = null; // Tuile vide
+                        tuiles[i][j] = new Plaine(); // Tuile vide
                     }
+                    tuiles[i][j].setPosition(i, j);
                 }
             }
         }
