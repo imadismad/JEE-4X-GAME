@@ -91,6 +91,16 @@ public class Soldat {
                 if (ville.getDP() <= 0) {
                     System.out.println("Ville capturée !");
                     ville.setAppartenance(this.getJoueur());
+
+                    // Vérifier s'il y a un soldat ennemi sur la ville
+                    if (cible.contientSoldat(this.partie)) {
+                        Soldat soldatEnnemi = cible.getSoldat(this.partie);
+                        if (soldatEnnemi.getJoueur() != this.joueur) {
+                            System.out.println("Soldat ennemi présent sur la ville capturée. Élimination du soldat.");
+                            soldatEnnemi.getJoueur().retirerSoldat(soldatEnnemi);
+                            dep = true;
+                        }
+                    }
                 } else {
                     System.out.println("Points de Défense restants : " + ville.getDP());
                     dep = false;
@@ -99,6 +109,7 @@ public class Soldat {
                 System.out.println("Ville alliée détectée. Pas d'attaque possible.");
             }
         }
+
 
         // Déplacement normal si aucune contrainte n'annule l'action
         if (dep) {

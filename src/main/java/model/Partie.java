@@ -107,6 +107,7 @@ public class Partie {
             Ville ville = new Ville();
             ville.capturer(joueurs[i]); // Attribue la ville au joueur
             tuiles[x][y] = ville;
+            tuiles[x][y].setPosition(x, y);
 
             // Créer un soldat pour le joueur et le placer sur la ville
             Soldat soldat = new Soldat(x, y, joueurs[i], this);

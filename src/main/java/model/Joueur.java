@@ -11,6 +11,7 @@ public class Joueur {
 
     public Joueur(Utilisateur utilisateur, Partie partie) {
         this.utilisateur = utilisateur;
+        utilisateur.setJoueur(this);
         this.score = 0;
         this.soldats = new ArrayList<>();
         this.partie = partie;
