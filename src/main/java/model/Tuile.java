@@ -18,6 +18,18 @@ public abstract class Tuile {
         return type;
     }
     
+    public void setType(String type) {
+    	this.type = type;
+    }
+    
+    public int getX() {
+    	return x;
+    }
+    
+    public int getY() {
+    	return y;
+    }
+    
     public boolean contientSoldat(Partie partie) {
         // Parcourt les soldats de la partie pour vérifier leur position
         for (Soldat soldat : partie.getSoldats()) {

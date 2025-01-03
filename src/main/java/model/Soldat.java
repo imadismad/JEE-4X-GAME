@@ -17,12 +17,21 @@ public class Soldat {
         this.partie = partie;
     }
     
+    public Partie getPartie() {
+    	return partie;
+    }
+    
     public void perdreVie(int pv) {
     	vie = vie-pv;
     }
     
     public void soin() {
-    	vie++;
+        int soin = (int) (Math.random() * 3) + 2; // Génère un nombre entre 2 et 4
+        vie = Math.min(vie + soin, 15); // Assure que la vie ne dépasse pas 15
+    }
+
+    public int getVie() {
+    	return vie;
     }
     
     public boolean estMort() {

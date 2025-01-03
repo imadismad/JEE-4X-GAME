@@ -16,6 +16,14 @@ public class Partie {
         this.tuiles = new Tuile[MAX_X][MAX_Y];
         this.nombreJoueurs = 0;
     }
+    
+    public Joueur[] getJoueurs() {
+    	return joueurs;
+    }
+    
+    public Tuile[][] getTuiles() {
+        return tuiles;
+    }
 
     public Tuile getTuile(int x, int y) {
         return tuiles[x][y];
@@ -71,7 +79,7 @@ public class Partie {
                         }
                     } else if (tuiles[i][j] instanceof Montagne) {
                         System.out.print("M  ");
-                    } else if (tuiles[i][j] instanceof Foret) {
+                    } else if (tuiles[i][j].getType() == "Forêt") {
                         System.out.print("F  ");
                     } else {
                         System.out.print(".  "); // Tuile vide
