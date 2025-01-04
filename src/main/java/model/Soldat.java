@@ -78,6 +78,7 @@ public class Soldat {
                 if (soldatCible.estMort()) {
                     System.out.println("Soldat ennemi éliminé. Vous prenez sa place.");
                     soldatCible.getJoueur().retirerSoldat(soldatCible);
+                    this.getJoueur().addScore(10); //10 points par soldat mort
                 } else {
                     System.out.println("Soldat ennemi encore en vie.");
                     dep = false;
@@ -100,6 +101,7 @@ public class Soldat {
                 if (ville.getDP() <= 0) {
                     System.out.println("Ville capturée !");
                     ville.setAppartenance(this.getJoueur());
+                    this.getJoueur().addScore(50); //50 points par ville capturée
 
                     // Vérifier s'il y a un soldat ennemi sur la ville
                     if (cible.contientSoldat(this.partie)) {
@@ -107,6 +109,7 @@ public class Soldat {
                         if (soldatEnnemi.getJoueur() != this.joueur) {
                             System.out.println("Soldat ennemi présent sur la ville capturée. Élimination du soldat.");
                             soldatEnnemi.getJoueur().retirerSoldat(soldatEnnemi);
+                            this.getJoueur().addScore(10);
                             dep = true;
                         }
                     }

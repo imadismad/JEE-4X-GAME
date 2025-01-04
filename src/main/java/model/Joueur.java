@@ -22,6 +22,14 @@ public class Joueur {
     public Utilisateur getUtilisateur() {
         return utilisateur;
     }
+    
+    public int getScore() {
+    	return score;
+    }
+    
+    public void addScore(int sc) {
+    	this.score+=sc;
+    }
 
     public Partie getPartie() {
         return partie;
