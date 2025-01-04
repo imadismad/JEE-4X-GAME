@@ -7,9 +7,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import model.storage.exception.StockageAccesException;
 import model.storage.exception.StockageStructureException;
@@ -77,6 +82,10 @@ public class CSVStockage implements StockageInterface {
 					);
 		}
 		
+		// On est sur qu'il ne manque aucun champs dans notre map de valeur, maintenant on vérifie s'il n'y en a pas en trop (champ d'autre table).
+		if (valeurs.size() > table.getChamps().length)
+			throw new IllegalArgumentException("Certains champs passé en paramètre ne sont pas présent dans la table");
+		
 		String ligne = String.join(SEPARATEUR, valeurs.values().stream().map((valeur) -> valeur.toString()).toArray(String[]::new)) + "\n";
 		
 		BufferedWriter writer = null;
@@ -95,6 +104,62 @@ public class CSVStockage implements StockageInterface {
 			
 		}
 		
+	}
+	
+	@Override
+	public List<Map<StructureInterface, Object>> getToutesEntrees(TableEnum table, Map<StructureInterface, Object> valeurs) throws StockageValeurException, StockageAccesException {
+		LineNumberReader reader = getReader(table);
+		
+		List<Map<StructureInterface, Object>> donnees = new ArrayList<>();
+		Map<String, Object> donnee;
+		while ((donnee = this.parseLigneSuivante(table, reader)) != null) {
+			boolean estOk = true;
+			Iterator<Entry<StructureInterface, Object>> iterateur = valeurs.entrySet().iterator();
+			while (estOk && iterateur.hasNext()) {
+				Entry<StructureInterface, Object> condition = iterateur.next();
+				
+				estOk &= condition.getValue().equals(donnee.get(condition.getKey().getValeur()));
+			}
+			
+			if (estOk) {
+				Map<StructureInterface, Object> map = donnee
+						.entrySet()
+						.stream()
+						.collect(Collectors.toMap((entry) -> table.getStructureInterface(entry.getKey()), Map.Entry::getValue));
+				donnees.add(map);
+			}
+				
+		}
+		
+		
+		return donnees;
+	}
+	
+	@Override
+	public Map<StructureInterface, Object> getPremiereEntrees(TableEnum table, Map<StructureInterface, Object> valeurs) throws StockageAccesException, StockageValeurException, IllegalArgumentException {
+		LineNumberReader reader = getReader(table);
+		
+		Map<String, Object> donnee;
+		while ((donnee = this.parseLigneSuivante(table, reader)) != null) {
+			boolean estOk = true;
+			Iterator<Entry<StructureInterface, Object>> iterateur = valeurs.entrySet().iterator();
+			while (estOk && iterateur.hasNext()) {
+				Entry<StructureInterface, Object> condition = iterateur.next();
+				
+				estOk &= condition.getValue().equals(donnee.get(condition.getKey().getValeur()));
+			}
+			
+			if (estOk) {
+				Map<StructureInterface, Object> map = donnee
+						.entrySet()
+						.stream()
+						.collect(Collectors.toMap((entry) -> table.getStructureInterface(entry.getKey()), Map.Entry::getValue));
+				return map;
+			}
+				
+		}
+
+		return null;
 	}
 	
 	/**
