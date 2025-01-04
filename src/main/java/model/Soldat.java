@@ -1,39 +1,58 @@
 package model;
 
+// Importation de la bibliothèque Map
 import java.util.Map;
 
+// Définition de la classe Soldat
 public class Soldat {
-    private int vie;
-    private int x;
-    private int y;
-    private Joueur joueur;
-    private Partie partie;
+    // Attributs de la classe Soldat
+    private int vie; // Représente les points de vie du soldat
+    private int x; // Position X du soldat sur la carte
+    private int y; // Position Y du soldat sur la carte
+    private Joueur joueur; // Référence au joueur propriétaire du soldat
+    private Partie partie; // Référence à la partie dans laquelle évolue le soldat
 
+    // Constructeur de la classe Soldat
     public Soldat(int x, int y, Joueur joueur, Partie partie) {
-        this.vie = 3;
-        this.x = x;
-        this.y = y;
-        this.joueur = joueur;
-        this.partie = partie;
+        this.vie = 15; // Initialisation des points de vie à 15
+        this.x = x; // Initialisation de la position X
+        this.y = y; // Initialisation de la position Y
+        this.joueur = joueur; // Association au joueur propriétaire
+        this.partie = partie; // Association à la partie
     }
-    
-    public void perdreVie() {
-    	vie--;
+
+    // Getter pour récupérer la partie associée au soldat
+    public Partie getPartie() {
+        return partie;
     }
-    
+
+    // Méthode pour réduire les points de vie du soldat
+    public void perdreVie(int pv) {
+        vie = vie - pv; // Réduction des points de vie
+    }
+
+    // Méthode pour soigner le soldat
     public void soin() {
-    	vie++;
+        int soin = (int) (Math.random() * 3) + 2; // Génère un soin entre 2 et 4 points
+        vie = Math.min(vie + soin, 15); // Limite les points de vie à un maximum de 15
     }
-    
+
+    // Getter pour récupérer les points de vie actuels du soldat
+    public int getVie() {
+        return vie;
+    }
+
+    // Vérifie si le soldat est mort (points de vie <= 0)
     public boolean estMort() {
-    	return this.vie <= 0;
+        return this.vie <= 0;
     }
 
+    // Méthode pour déplacer le soldat dans une direction donnée
     public void deplacer(Direction direction) {
-        int nx = x, ny = y;
-        boolean dep = true;
+        int nx = x, ny = y; // Variables pour les nouvelles coordonnées
+        boolean dep = true; // Indique si le déplacement est possible
 
-        // Calcul des nouvelles coordonnées
+        // Calcul des nouvelles coordonnées en fonction de la direction
         switch (direction) {
             case HAUT: nx--; break;
             case BAS: nx++; break;
@@ -42,81 +61,104 @@ public class Soldat {
             default: break;
         }
 
-        // Vérification des limites
+        // Vérifie si les nouvelles coordonnées sont dans les limites de la carte
         if (nx < 0 || nx >= Partie.MAX_X || ny < 0 || ny >= Partie.MAX_Y) {
             System.out.println("Déplacement hors limites.");
-            return;
+            return; // Annule le déplacement si hors limites
         }
 
-        Tuile cible = joueur.getPartie().getTuile(nx, ny); // Suppose qu'un soldat a un lien vers son joueur et sa partie.
+        // Récupération de la tuile cible sur la carte
+        Tuile cible = joueur.getPartie().getTuile(nx, ny);
+
+        // Vérifie si la tuile cible est une montagne
         if (cible instanceof Montagne) {
             System.out.println("Impossible de se déplacer sur une montagne. Réessayez.");
-            return;
+            return; // Annule le déplacement
         }
 
-        //TODO VERIFIER LE CAS OU LE SOLDAT EST SUR UNE CASE VIDE
-        
-        // Vérification des interactions avec le contenu de la case
+        // Gestion des interactions avec un soldat sur la tuile cible
+        System.out.println("Vérification d'un soldat.");
         if (cible.contientSoldat(this.partie)) {
+            System.out.println("Soldat détecté.");
             Soldat soldatCible = cible.getSoldat(this.partie);
             if (soldatCible.getJoueur() != this.joueur) {
                 System.out.println("Attaque du soldat ennemi !");
-                soldatCible.perdreVie();
+                int forceAttaque = (int) (Math.random() * 6) + 1; // Force d'attaque aléatoire entre 1 et 6
+                System.out.println("Force d'attaque contre le soldat : " + forceAttaque);
+
+                soldatCible.perdreVie(forceAttaque); // Réduction des points de vie du soldat ennemi
                 if (soldatCible.estMort()) {
                     System.out.println("Soldat ennemi éliminé. Vous prenez sa place.");
-                    joueur.retirerSoldat(soldatCible);
+                    soldatCible.getJoueur().retirerSoldat(soldatCible); // Retrait du soldat ennemi
+                    this.getJoueur().addScore(10); // Ajout de points pour l'élimination
                 } else {
-                    System.out.println("Soldat ennemi encore en vie. Déplacement annulé.");
-                    dep = false;
+                    System.out.println("Soldat ennemi encore en vie.");
+                    dep = false; // Annule le déplacement
                 }
             } else {
                 System.out.println("Case occupée par un allié. Déplacement annulé.");
-                dep = false;
+                dep = false; // Annule le déplacement
             }
         }
 
+        // Gestion des interactions avec une ville sur la tuile cible
         if (cible instanceof Ville) {
-            Ville ville = (Ville)cible;
+            Ville ville = (Ville) cible;
             if (ville.getAppartenance() != this.joueur) {
                 System.out.println("Attaque de la ville ennemie !");
-                ville.loseDP();
-                if (ville.getDP()<=0) {
-                	System.out.println("Capture de la ville.");
-                	ville.setAppartenance(this.getJoueur());
+                int forceAttaqueVille = (int) (Math.random() * 6) + 1; // Force d'attaque aléatoire contre la ville
+                System.out.println("Force d'attaque contre la ville : " + forceAttaqueVille);
+
+                ville.loseDP(forceAttaqueVille); // Réduction des points de défense de la ville
+                if (ville.getDP() <= 0) {
+                    System.out.println("Ville capturée !");
+                    ville.setAppartenance(this.getJoueur()); // Changement de propriétaire
+                    this.getJoueur().addScore(50); // Ajout de points pour la capture
+
+                    // Vérifie s'il y a un soldat ennemi sur la ville
+                    if (cible.contientSoldat(this.partie)) {
+                        Soldat soldatEnnemi = cible.getSoldat(this.partie);
+                        if (soldatEnnemi.getJoueur() != this.joueur) {
+                            System.out.println("Soldat ennemi présent sur la ville capturée. Élimination du soldat.");
+                            soldatEnnemi.getJoueur().retirerSoldat(soldatEnnemi); // Élimination du soldat ennemi
+                            this.getJoueur().addScore(10); // Ajout de points pour l'élimination
+                            dep = true; // Autorise le déplacement
+                        }
+                    }
                 } else {
-                	System.out.println("Points de Defense restants : " + ville.getDP());
-                	dep = false;
+                    System.out.println("Points de Défense restants : " + ville.getDP());
+                    dep = false; // Annule le déplacement
                 }
             } else {
-                System.out.println("Vous ne pouvez pas attaquer une ville alliée.");
+                System.out.println("Ville alliée détectée. Pas d'attaque possible.");
             }
         }
 
-        // Déplacement normal
-        if (dep != false) {
-        	this.setX(nx);
-        	this.setY(ny);
-        	System.out.println("Soldat déplacé en direction de " + direction + " vers (" + nx + ", " + ny + ")");
+        // Si le déplacement est autorisé, met à jour les coordonnées
+        if (dep) {
+            this.setX(nx);
+            this.setY(ny);
+            System.out.println("Soldat déplacé en direction de " + direction + " vers (" + nx + ", " + ny + ")");
         }
     }
 
-
+    // Simule une attaque dans une direction donnée
     public boolean attaquer(Direction direction) {
-        // Simule une attaque
         System.out.println("Attaque dans la direction de " + direction);
-        return true;
+        return true; // Retourne toujours vrai (simulation)
     }
 
+    // Retourne une carte des actions possibles en fonction des directions
     public Map<Direction, Action> getActionPossible() {
-        // Retourne une carte des actions possibles
-        return Map.of(Direction.HAUT, Action.ATTAQUER, Direction.BAS, Action.DEPLACER);
+        return Map.of(Direction.HAUT, Action.ATTAQUER, Direction.BAS, Action.DEPLACER); // Exemples d'actions
     }
 
+    // Notifie les observateurs d'un changement d'état
     public void notifierObserver() {
-        // Notifie les observateurs du changement d'état
         System.out.println("Notification des observateurs pour le soldat.");
     }
 
+    // Getters et setters pour les attributs X, Y et joueur
     public Joueur getJoueur() {
         return joueur;
     }
@@ -128,7 +170,7 @@ public class Soldat {
     public int getY() {
         return y;
     }
-    
+
     public void setX(int x) {
         this.x = x;
     }

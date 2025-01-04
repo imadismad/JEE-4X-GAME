@@ -15,14 +15,28 @@ public class Utilisateur {
 	 */
 	public static final String CLEF_UTILISATEUR_SESSION = "utilisateur";
 	
-	public static final String MDP_CRYPT = "SHA-256";
-	
     private String nomUtilisateur;
     private int[] scores;
+    private Joueur joueur;
 
     public Utilisateur(String nomUtilisateur, int[] scores) {
         this.nomUtilisateur = nomUtilisateur;
         this.scores = scores;
+        this.joueur = null;
+    }
+
+    /**
+     * Vérifie si l'utilisateur est connecté via la session.
+     * 
+     * @param servletSession La session actuelle de l'utilisateur
+     * @return true si l'utilisateur est connecté, sinon false
+     */
+    public boolean estConnecte(Object servletSession) {
+        return servletSession != null;
+    }
+    
+    public void setJoueur(Joueur j) {
+    	this.joueur = j;
     }
 
     /**

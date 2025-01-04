@@ -1,114 +1,135 @@
 package model;
-import java.util.Random;
-import java.util.ArrayList;
-import java.util.List;
 
+import java.util.ArrayList; // Utilisé pour gérer une liste dynamique de soldats
+import java.util.List; // Interface pour gérer des collections de soldats
+// Importation des bibliothèques nécessaires
+import java.util.Random; // Utilisé pour générer des nombres aléatoires
+
+// Définition de la classe Partie
 public class Partie {
-    public static final int MAX_X = 10;
-    public static final int MAX_Y = 10;
+    // Déclaration des constantes pour les dimensions de la carte
+    public static final int MAX_X = 10; // Largeur maximale de la carte
+    public static final int MAX_Y = 10; // Hauteur maximale de la carte
 
-    private Joueur[] joueurs;
-    private Tuile[][] tuiles;
-    private int nombreJoueurs;
+    // Attributs de la classe Partie
+    private Joueur[] joueurs; // Tableau pour stocker les joueurs participant à la partie
+    private Tuile[][] tuiles; // Grille représentant les tuiles de la carte
+    private int nombreJoueurs; // Nombre actuel de joueurs dans la partie
 
+    // Constructeur par défaut de la classe Partie
     public Partie() {
-        this.joueurs = new Joueur[4]; // Limite à 4 joueurs
-        this.tuiles = new Tuile[MAX_X][MAX_Y];
-        this.nombreJoueurs = 0;
+        this.joueurs = new Joueur[4]; // Initialise le tableau avec un maximum de 4 joueurs
+        this.tuiles = new Tuile[MAX_X][MAX_Y]; // Initialise la grille de tuiles
+        this.nombreJoueurs = 0; // Initialise le nombre de joueurs à 0
     }
 
+    // Getter pour obtenir le tableau des joueurs
+    public Joueur[] getJoueurs() {
+        return joueurs;
+    }
+
+    // Getter pour obtenir la grille de tuiles
+    public Tuile[][] getTuiles() {
+        return tuiles;
+    }
+
+    // Récupère une tuile spécifique à partir de ses coordonnées
     public Tuile getTuile(int x, int y) {
         return tuiles[x][y];
     }
 
+    // Récupère une liste de tous les soldats présents sur la carte
     public List<Soldat> getSoldats() {
-        List<Soldat> soldats = new ArrayList<>();
-        for (Joueur joueur : joueurs) {
-            if (joueur != null) {
-                soldats.addAll(joueur.getSoldats());
+        List<Soldat> soldats = new ArrayList<>(); // Liste pour stocker les soldats
+        for (Joueur joueur : joueurs) { // Parcours des joueurs
+            if (joueur != null) { // Si le joueur n'est pas nul
+                soldats.addAll(joueur.getSoldats()); // Ajouter les soldats du joueur
             }
         }
-        return soldats;
+        return soldats; // Retourne la liste des soldats
     }
 
+    // Méthode pour afficher l'état actuel de la carte
     public void afficherCarte() {
         System.out.println("==== AFFICHAGE DE LA CARTE ====");
 
-        // Affichage de l'entête avec les indices de colonnes
-        System.out.print("    "); // Indentation pour les indices de colonnes
+        // Affiche les indices de colonnes
+        System.out.print("    "); // Indentation pour aligner les indices
         for (int j = 0; j < MAX_Y; j++) {
-            System.out.print(j + "  "); // Afficher les indices des colonnes
+            System.out.print(j + "  "); // Affiche les indices des colonnes
         }
-        System.out.println(); // Retour à la ligne après l'entête des colonnes
+        System.out.println(); // Retour à la ligne après les indices
 
-        // Affichage de chaque ligne avec les indices des lignes
+        // Parcours des lignes et affichage de chaque tuile
         for (int i = 0; i < MAX_X; i++) {
-            System.out.print(i + "   "); // Afficher l'indice de la ligne
+            System.out.print(i + "   "); // Affiche l'indice de la ligne
 
-            List<Soldat> soldats = getSoldats();
+            List<Soldat> soldats = getSoldats(); // Récupère les soldats
             boolean soldatTrouve;
 
             for (int j = 0; j < MAX_Y; j++) {
                 soldatTrouve = false;
 
-                // Vérifier s'il y a un soldat sur cette tuile
+                // Vérifie s'il y a un soldat sur la tuile
                 for (Soldat soldat : soldats) {
                     if (soldat.getX() == i && soldat.getY() == j) {
                         System.out.print("S" + soldat.getJoueur().getUtilisateur().getNomUtilisateur().charAt(0) + " ");
                         soldatTrouve = true;
-                        break;
+                        break; // Sort de la boucle dès qu'un soldat est trouvé
                     }
                 }
 
                 if (!soldatTrouve) {
-                    // Afficher le type de tuile
+                    // Affiche le type de tuile si aucun soldat n'est présent
                     if (tuiles[i][j] instanceof Ville) {
                         Ville ville = (Ville) tuiles[i][j];
                         if (ville.getAppartenance() != null) {
                             System.out.print("V" + ville.getAppartenance().getUtilisateur().getNomUtilisateur().charAt(0) + " ");
                         } else {
-                            System.out.print("V_ ");
+                            System.out.print("V_ "); // Ville sans propriétaire
                         }
                     } else if (tuiles[i][j] instanceof Montagne) {
-                        System.out.print("M  ");
-                    } else if (tuiles[i][j] instanceof Foret) {
-                        System.out.print("F  ");
+                        System.out.print("M  "); // Montagne
+                    } else if (tuiles[i][j].getType() == "Forêt") {
+                        System.out.print("F  "); // Forêt
                     } else {
                         System.out.print(".  "); // Tuile vide
                     }
                 }
             }
-            System.out.println(); // Retour à la ligne après chaque ligne de la carte
+            System.out.println(); // Retour à la ligne après chaque ligne
         }
         System.out.println("================================");
     }
 
-
+    // Ajoute un joueur à la partie
     public void ajouterJoueur(Joueur joueur) {
-        if (nombreJoueurs < joueurs.length) {
-            joueurs[nombreJoueurs++] = joueur;
+        if (nombreJoueurs < joueurs.length) { // Vérifie s'il reste de la place
+            joueurs[nombreJoueurs++] = joueur; // Ajoute le joueur et incrémente le compteur
             System.out.println("Joueur " + joueur.getUtilisateur().getNomUtilisateur() + " ajouté à la partie.");
         } else {
             System.out.println("Partie pleine, impossible d'ajouter un autre joueur.");
         }
     }
 
+    // Initialise la carte avec des tuiles et attribue des villes et soldats aux joueurs
     public void initialiserCarte() {
-        Random rand = new Random();
+        Random rand = new Random(); // Générateur de nombres aléatoires
 
         // Initialisation des villes et des soldats pour chaque joueur
         for (int i = 0; i < nombreJoueurs; i++) {
             int x, y;
             do {
-                x = rand.nextInt(MAX_X);
-                y = rand.nextInt(MAX_Y);
-            } while (tuiles[x][y] != null); // Assurer qu'il n'y a pas déjà une ville
+                x = rand.nextInt(MAX_X); // Génère une position X aléatoire
+                y = rand.nextInt(MAX_Y); // Génère une position Y aléatoire
+            } while (tuiles[x][y] != null); // Vérifie que la tuile est libre
 
-            Ville ville = new Ville();
+            Ville ville = new Ville(); // Crée une nouvelle ville
             ville.capturer(joueurs[i]); // Attribue la ville au joueur
-            tuiles[x][y] = ville;
+            tuiles[x][y] = ville; // Place la ville sur la carte
+            tuiles[x][y].setPosition(x, y); // Définit la position de la ville
 
-            // Créer un soldat pour le joueur et le placer sur la ville
+            // Crée un soldat pour le joueur et le place sur la ville
             Soldat soldat = new Soldat(x, y, joueurs[i], this);
             joueurs[i].ajouterSoldat(soldat);
 
@@ -116,18 +137,19 @@ public class Partie {
                     + " en (" + x + ", " + y + ") avec un soldat.");
         }
 
-        // Remplir les autres cases de la carte
+        // Remplit les cases restantes avec des tuiles aléatoires
         for (int i = 0; i < MAX_X; i++) {
             for (int j = 0; j < MAX_Y; j++) {
-                if (tuiles[i][j] == null) { // Si la tuile n'a pas encore été assignée
-                    double random = Math.random();
-                    if (random < 0.3) {
-                        tuiles[i][j] = new Montagne();
-                    } else if (random < 0.6) {
-                        tuiles[i][j] = new Foret();
+                if (tuiles[i][j] == null) { // Vérifie si la case est libre
+                    double random = Math.random(); // Génère un nombre entre 0 et 1
+                    if (random < 0.15) {
+                        tuiles[i][j] = new Montagne(); // Place une montagne
+                    } else if (random < 0.5) {
+                        tuiles[i][j] = new Foret(); // Place une forêt
                     } else {
-                        tuiles[i][j] = null; // Tuile vide
+                        tuiles[i][j] = new Plaine(); // Place une plaine (tuile vide)
                     }
+                    tuiles[i][j].setPosition(i, j); // Définit la position de la tuile
                 }
             }
         }
