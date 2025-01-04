@@ -1,93 +1,105 @@
 package model;
-import java.util.List;
-import java.util.ArrayList;
 
+// Importation des bibliothèques nécessaires
+import java.util.List; // Interface pour gérer des collections de soldats
+import java.util.ArrayList; // Utilisé pour créer une liste dynamique de soldats
+
+// Définition de la classe Joueur
 public class Joueur {
-    private int score;
-    private Object connexionWS;
-    private Utilisateur utilisateur;
-    private Partie partie;
-    private List<Soldat> soldats;
-    private int PP; // Points de production
+    // Attributs de la classe
+    private int score; // Score du joueur
+    private Object connexionWS; // Objet représentant la connexion WebSocket (non utilisé dans le code)
+    private Utilisateur utilisateur; // L'utilisateur associé au joueur
+    private Partie partie; // La partie à laquelle le joueur participe
+    private List<Soldat> soldats; // Liste des soldats contrôlés par le joueur
+    private int PP; // Points de production (ressources pour créer des unités)
 
+    // Constructeur de la classe Joueur
     public Joueur(Utilisateur utilisateur, Partie partie) {
-        this.utilisateur = utilisateur;
-        utilisateur.setJoueur(this);
-        this.score = 0;
-        this.soldats = new ArrayList<>();
-        this.partie = partie;
-        this.PP = 0;
+        this.utilisateur = utilisateur; // Associe un utilisateur au joueur
+        utilisateur.setJoueur(this); // Relie l'utilisateur à cet objet joueur
+        this.score = 0; // Initialise le score à 0
+        this.soldats = new ArrayList<>(); // Initialise une liste vide de soldats
+        this.partie = partie; // Définit la partie à laquelle le joueur participe
+        this.PP = 0; // Initialise les points de production à 0
     }
 
+    // Getter pour obtenir l'utilisateur associé au joueur
     public Utilisateur getUtilisateur() {
         return utilisateur;
     }
-    
+
+    // Getter pour le score
     public int getScore() {
-    	return score;
-    }
-    
-    public void addScore(int sc) {
-    	this.score+=sc;
+        return score;
     }
 
+    // Méthode pour ajouter des points au score
+    public void addScore(int sc) {
+        this.score += sc; // Augmente le score du joueur
+    }
+
+    // Getter pour obtenir la partie associée au joueur
     public Partie getPartie() {
         return partie;
     }
 
+    // Méthode pour ajouter un soldat à la liste du joueur
     public void ajouterSoldat(Soldat soldat) {
         soldats.add(soldat);
     }
-    
+
+    // Méthode pour retirer un soldat de la liste du joueur
     public void retirerSoldat(Soldat soldat) {
         soldats.remove(soldat);
     }
 
+    // Getter pour obtenir la liste des soldats du joueur
     public List<Soldat> getSoldats() {
         return soldats;
     }
 
-    // Getter et Setter pour les Points de Production (PP)
+    // Getter pour les Points de Production (PP)
     public int getPP() {
         return PP;
     }
 
+    // Setter pour définir les Points de Production
     public void setPP(int PP) {
         this.PP = PP;
     }
 
-    // Méthode pour ajouter des PP
+    // Méthode pour ajouter des Points de Production
     public void ajouterPP(int points) {
         this.PP += points;
         System.out.println("Ajout de " + points + " PP. Total des PP : " + this.PP);
     }
 
-    // Méthode pour retirer des PP
+    // Méthode pour retirer des Points de Production
     public void retirerPP(int points) {
-        if (this.PP >= points) {
-            this.PP -= points;
+        if (this.PP >= points) { // Vérifie si le joueur a suffisamment de PP
+            this.PP -= points; // Diminue les PP du joueur
             System.out.println("Retrait de " + points + " PP. Total des PP : " + this.PP);
         } else {
             System.out.println("Pas assez de PP pour effectuer cette action.");
         }
     }
 
-    // Méthode pour créer un nouveau soldat sur une ville choisie, coût de 15 PP
+    // Méthode pour créer un nouveau soldat sur une ville
     public boolean creerSoldatSurVille(Ville ville) {
-        // Vérifier si la ville possède déjà un soldat
+        // Vérifie si la ville possède déjà un soldat
         if (ville.contientSoldat(this.partie)) {
             System.out.println("Un soldat est déjà présent sur la ville. Impossible de créer un nouveau soldat.");
             return false;
         }
 
-        // Vérifier si le joueur a suffisamment de PP pour créer un soldat
+        // Vérifie si le joueur a suffisamment de PP
         if (this.PP >= 15) {
-            // Retirer 15 PP pour la création du soldat
-            this.retirerPP(15);
+            this.retirerPP(15); // Retire 15 PP pour la création du soldat
 
-            // Placer un soldat sur la ville choisie
+            // Crée un nouveau soldat sur la position de la ville
             Soldat soldat = new Soldat(ville.getX(), ville.getY(), this, this.partie);
-            this.ajouterSoldat(soldat);
+            this.ajouterSoldat(soldat); // Ajoute le soldat à la liste du joueur
 
             System.out.println("Un soldat a été créé sur la ville " + ville + " pour un coût de 15 PP.");
             return true;
@@ -97,23 +109,23 @@ public class Joueur {
         }
     }
 
-    // Méthode pour ajouter des PP en fonction du nombre de villes possédées
+    // Méthode pour augmenter les PP en fonction du nombre de villes possédées
     public void incrementerPPParVilles() {
-        int nombreVilles = 0;
+        int nombreVilles = 0; // Initialise le compteur de villes
 
-        // Compter le nombre de villes possédées par le joueur
+        // Parcourt les tuiles de la carte pour compter les villes appartenant au joueur
         for (Tuile[] ligne : partie.getTuiles()) {
             for (Tuile tuile : ligne) {
-                if (tuile instanceof Ville) {
+                if (tuile instanceof Ville) { // Vérifie si la tuile est une ville
                     Ville ville = (Ville) tuile;
-                    if (ville.getAppartenance() == this) {
+                    if (ville.getAppartenance() == this) { // Vérifie si la ville appartient au joueur
                         nombreVilles++;
                     }
                 }
             }
         }
 
-        // Ajouter 3 PP multipliés par le nombre de villes
+        // Ajoute 3 PP pour chaque ville possédée
         int ppGagnes = 3 * nombreVilles;
         this.ajouterPP(ppGagnes);
         System.out.println("Le joueur a " + nombreVilles + " villes. " + ppGagnes + " PP ajoutés.");
@@ -121,13 +133,14 @@ public class Joueur {
 
     // Méthode pour notifier un changement d'état du joueur
     public void notifierChangement() {
-        // Affichage du changement d'état du joueur
+        // Affiche les informations sur l'état actuel du joueur
         System.out.println("Changement d'état pour le joueur : " + utilisateur.getNomUtilisateur());
         System.out.println("Score actuel : " + score);
         System.out.println("Nombre de soldats : " + soldats.size());
         System.out.println("Points de production actuels : " + PP);
     }
-    
+
+    // Méthode pour vérifier si le joueur possède à la fois des soldats et des villes
     public boolean hasSoldatsEtVilles() {
         // Vérifie si le joueur a des soldats
         boolean hasSoldats = !soldats.isEmpty();
@@ -138,25 +151,25 @@ public class Joueur {
             for (Tuile tuile : ligne) {
                 if (tuile instanceof Ville) {
                     Ville ville = (Ville) tuile;
-                    if (ville.getAppartenance() == this) {  // Vérifie si la ville appartient au joueur
+                    if (ville.getAppartenance() == this) { // Vérifie si la ville appartient au joueur
                         hasVilles = true;
-                        break; // On s'arrête dès qu'une ville appartenant au joueur est trouvée
+                        break; // Sort de la boucle si une ville est trouvée
                     }
                 }
             }
             if (hasVilles) {
-                break;  // On sort de la boucle si on a trouvé une ville du joueur
+                break; // Sort de la boucle principale si une ville est trouvée
             }
         }
 
-        // Le joueur doit avoir à la fois des soldats et des villes
+        // Retourne vrai si le joueur a des soldats et des villes
         return hasSoldats && hasVilles;
     }
 
-
+    // Méthode pour rejoindre une partie
     public void rejoindrePartie(Partie partie) {
-        this.partie = partie;
-        partie.ajouterJoueur(this);
+        this.partie = partie; // Associe la partie au joueur
+        partie.ajouterJoueur(this); // Ajoute le joueur à la partie
         System.out.println(utilisateur.getNomUtilisateur() + " a rejoint la partie.");
     }
 }
