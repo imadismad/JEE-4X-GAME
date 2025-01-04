@@ -15,6 +15,8 @@ public class Utilisateur {
 	 */
 	public static final String CLEF_UTILISATEUR_SESSION = "utilisateur";
 	
+	public static final String MDP_CRYPT = "SHA-256";
+	
     private String nomUtilisateur;
     private int[] scores;
 

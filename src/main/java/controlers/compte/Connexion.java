@@ -1,12 +1,21 @@
 package controlers.compte;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.Utilisateur;
+import model.storage.StockageInterface;
+import model.storage.exception.StockageAccesException;
+import model.storage.exception.StockageStructureException;
+import model.storage.exception.StockageValeurException;
+import model.storage.structure.StructureInterface;
+import model.storage.structure.TableEnum;
+import model.storage.structure.UtilisateurStructure;
 
 /**
  * Servlet permettant à un utilisateur de se connecter
@@ -40,12 +49,21 @@ public class Connexion extends HttpServlet {
         }
         
         // Connexion au compte
-        // TODO Ajouter la logique de connexion de compte (vérification + connexion)
-        if (!Arrays.asList("genius", "dummy").contains(nomUtilisateur) || !motDePasse.equals("book")) {
-        	afficherJSP("Le nom d'utilisateur ou le mot de passe sont incorecte", request, response);
-            return;
-
-        }
+        Map<StructureInterface, Object> config = new HashMap<>();
+        config.put(UtilisateurStructure.NOM_UTILISATEUR, nomUtilisateur);
+        config.put(UtilisateurStructure.MOT_DE_PASSE, motDePasse);
+        
+        try {
+        	Map<StructureInterface, Object> donnee = StockageInterface.getInstance().getPremiereEntrees(TableEnum.UTILISATEUR, config);
+			if (donnee == null) {
+				afficherJSP("Le nom d'utilisateur ou le mot de passe sont incorecte", request, response);
+			    return;
+			}
+			
+			request.getSession().setAttribute(Utilisateur.CLEF_UTILISATEUR_SESSION, new Utilisateur((String) donnee.get(UtilisateurStructure.NOM_UTILISATEUR), null));
+		} catch (StockageAccesException | StockageValeurException | StockageStructureException e1) {
+			throw new ServletException("Erreur lors de l'accès au système de stockage", e1);
+		} 
         
         // Redirection
         response.sendRedirect(getServletContext().getContextPath() + "/dummyPage.html");
