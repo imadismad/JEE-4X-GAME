@@ -1,12 +1,20 @@
 package controlers.compte;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.HashMap;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.Utilisateur;
+import model.storage.StockageInterface;
+import model.storage.exception.StockageAccesException;
+import model.storage.exception.StockageStructureException;
+import model.storage.exception.StockageValeurException;
+import model.storage.structure.StructureInterface;
+import model.storage.structure.TableEnum;
+import model.storage.structure.UtilisateurStructure;
 
 /**
  * Servlet permettant à un utilisateur de se créer un compte
@@ -32,19 +40,32 @@ public class Creation extends HttpServlet {
             return;
         }
         
-        // Vérification de l'unicité du nom d'utilisateur
-        // TODO Ajouter la vérification de l'unicité du nom de l'utilisateur 
-        if (Arrays.asList("genius", "dummy").contains(nomUtilisateur)) {
-        	afficherJSP("Le nom d'utilisateur est déjà utilisé. Veuillez en choisir un autre.", request, response);
-        	return;
-        }
+        try {
+
+        	// Vérification de l'unicité du nom d'utilisateur
+			if (Utilisateur.nomUtilisateurExiste(nomUtilisateur)) {
+				afficherJSP("Le nom d'utilisateur est déjà utilisé. Veuillez en choisir un autre.", request, response);
+				return;
+			}
         
         
-        // Création du compte
-        // TODO Ajouter la logique de création de compte et de login auto
+	        // Création du compte
+			HashMap<StructureInterface, Object> map = new HashMap<>();
+			map.put(UtilisateurStructure.NOM_UTILISATEUR, nomUtilisateur);
+			map.put(UtilisateurStructure.MOT_DE_PASSE, motDePasse);
+			StockageInterface.getInstance().ajouterValeur(TableEnum.UTILISATEUR, map);
+			System.out.println(map.get(UtilisateurStructure.NOM_UTILISATEUR));
+			
+	        // Connexion auto
+			request.getSession().setAttribute(Utilisateur.CLEF_UTILISATEUR_SESSION, new Utilisateur(nomUtilisateur, null));
+	        
+	        // Redirection
+	        //response.sendRedirect(getServletContext().getContextPath() + "/dummyPage.html");
+			afficherJSP("", request, response);
         
-        // Redirection
-        response.sendRedirect(getServletContext().getContextPath() + "/dummyPage.html");
+		} catch (StockageAccesException | StockageValeurException | StockageStructureException e) {
+			throw new ServletException("Erreur survenu lors de l'accès au système de sotckage", e);
+		}
 	}
 	
 	@Override

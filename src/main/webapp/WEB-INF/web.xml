@@ -10,6 +10,11 @@
     <welcome-file>default.htm</welcome-file>
   </welcome-file-list>
   <servlet>
+    <servlet-name>TomcatInitServlet</servlet-name>
+    <servlet-class>controlers.TomcatInitServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet>
     <description></description>
     <display-name>HelloWorld</display-name>
     <servlet-name>HelloWorld</servlet-name>
