@@ -1,7 +1,5 @@
 package model.storage.structure;
 
-import java.util.Arrays;
-
 /**
  * Énumération représentant une table dans un système de stockage (BDD, Système de fichier, ...)
  * Chaque objet est représentant par un chaine de caractère représentant sa valeur dans le système de stockage,
@@ -47,6 +45,11 @@ public enum TableEnum {
 		return (StructureInterface[]) getEnumClasse().getEnumConstants();
 	}
 	
+	/**
+	 * Récupère l'instance de StrucutureInterface correspondant à l'énumération associé à la table qui correspond a la valeur passé en commentaire
+	 * @param clef La valeur de l'énumération
+	 * @return l'objet StructureInterface correspondant
+	 */
 	public StructureInterface getStructureInterface(String clef) {
 		for (StructureInterface struc : this.getChamps()) {
 			if (clef.equals(struc.getValeur()))
