@@ -111,7 +111,7 @@ public class Partie {
             System.out.println("Partie pleine, impossible d'ajouter un autre joueur.");
         }
     }
-
+    
     // Initialise la carte avec des tuiles et attribue des villes et soldats aux joueurs
     public void initialiserCarte() {
         Random rand = new Random(); // Générateur de nombres aléatoires
@@ -153,5 +153,16 @@ public class Partie {
                 }
             }
         }
+    }
+    
+    /**
+     * Permet de notifier tous les joueurs de la partie d'un changement dans le jeu
+     * @param message Le message associé a ce changement
+     * @param plateauChange Indique si le plateau a changer. C'est a dire, indique si une entité a été créée ou déplacé, si une ville a été capturé, etc. 
+     */
+    private void notifierJoueurs(String message, boolean plateauChange) {
+    	for (Joueur joueur : this.getJoueurs()) {
+			//joueur.getWebSocket()
+		}
     }
 }

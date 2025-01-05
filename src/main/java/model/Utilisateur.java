@@ -41,12 +41,19 @@ public class Utilisateur {
 
     /**
      * Retourne l'objet Joueur associé à cet utilisateur.
-     * 
      * @return Le joueur associé à cet utilisateur
      */
-    //public Joueur getJoueur() {
-    //    return new Joueur(this);
-    //}
+    public Joueur getJoueur() {
+        return this.joueur;
+    }
+    
+    public boolean estEnPartie() {
+		return this.getJoueur() != null;
+	}
+    
+    public String getNomUtilisateur() {
+        return nomUtilisateur;
+    }
 
     /**
      * Vérifie si l'utilisateur est connecté via la session.
@@ -69,10 +76,6 @@ public class Utilisateur {
             return (Utilisateur) servletSession.getAttribute(CLEF_UTILISATEUR_SESSION);
 
         return null;
-    }
-
-    public String getNomUtilisateur() {
-        return nomUtilisateur;
     }
     
     /**
