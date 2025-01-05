@@ -41,6 +41,6 @@ public class AfficherGrille extends HttpServlet {
         request.setAttribute("partie", partie);
 
         // Transmettre les données à la JSP
-        request.getRequestDispatcher("/WEB-INF/jsp/affichageGrille.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/partie/affichageGrille.jsp").forward(request, response);
     }
 }

@@ -44,4 +44,25 @@
     <servlet-name>Connexion</servlet-name>
     <url-pattern>/compte/connexion</url-pattern>
   </servlet-mapping>
+  <servlet>
+	  <servlet-name>SimulationGrille</servlet-name>
+	  <servlet-class>controlers.test.SimulationGrille</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	  <servlet-name>SimulationGrille</servlet-name>
+	  <url-pattern>/test/simulerPartie</url-pattern>
+	</servlet-mapping>
+	<servlet>
+	  <description>Affichage de la grille de la partie</description>
+	  <display-name>AfficherGrille</display-name>
+	  <servlet-name>AfficherGrille</servlet-name>
+	  <servlet-class>controlers.grille.AfficherGrille</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	  <servlet-name>AfficherGrille</servlet-name>
+	  <url-pattern>/partie/afficherGrille</url-pattern>
+	</servlet-mapping>
+
+	
+  
 </web-app>
