@@ -152,6 +152,25 @@ public class Soldat {
     public Map<Direction, Action> getActionPossible() {
         return Map.of(Direction.HAUT, Action.ATTAQUER, Direction.BAS, Action.DEPLACER); // Exemples d'actions
     }
+    
+    public boolean peutSeDeplacer(String direction) {
+        switch (direction) {
+            case "haut": return !partie.estTuileInaccessible(x - 1, y);
+            case "bas": return !partie.estTuileInaccessible(x + 1, y);
+            case "gauche": return !partie.estTuileInaccessible(x, y - 1);
+            case "droite": return !partie.estTuileInaccessible(x, y + 1);
+            default: return false;
+        }
+    }
+
+    public boolean peutDefricher() {
+        return this.getPartie().getTuile(this.getX(), this.getY()) instanceof Foret;
+    }
+
+    public boolean peutSeSoigner() {
+        return this.getVie() < 15;
+    }
+
 
     // Notifie les observateurs d'un changement d'état
     public void notifierObserver() {

@@ -37,6 +37,31 @@ public class Partie {
     public Tuile getTuile(int x, int y) {
         return tuiles[x][y];
     }
+    
+    /**
+     * Vérifie si une tuile est inaccessible.
+     *
+     * @param x La coordonnée X de la tuile
+     * @param y La coordonnée Y de la tuile
+     * @return true si la tuile est inaccessible, false sinon
+     */
+    public boolean estTuileInaccessible(int x, int y) {
+        // Vérifie si les coordonnées sont hors des limites de la carte
+        if (x < 0 || x >= MAX_X || y < 0 || y >= MAX_Y) {
+            return true; // Hors limites
+        }
+
+        // Récupère la tuile aux coordonnées spécifiées
+        Tuile tuile = this.getTuile(x, y);
+
+        // Vérifie si la tuile est une montagne (ou tout autre type inaccessible)
+        if (tuile instanceof Montagne) {
+            return true; // Inaccessible car montagne
+        }
+
+        // Sinon, la tuile est accessible
+        return false;
+    }
 
     // Récupère une liste de tous les soldats présents sur la carte
     public List<Soldat> getSoldats() {
