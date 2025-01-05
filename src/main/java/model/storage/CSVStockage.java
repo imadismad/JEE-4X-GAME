@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import model.storage.exception.StockageAccesException;
 import model.storage.exception.StockageStructureException;
@@ -38,6 +37,8 @@ public class CSVStockage implements StockageInterface {
 	
 	private static String SEPARATEUR = ";";
 	
+	private Map<TableEnum, StructureInterface[]> entetes;
+	
 	/**
 	 * Constructeur unique de la classe.
 	 * Elle initialise les différents fichiers csv nécessaires pour pouvoir utiliser le stockage.
@@ -45,6 +46,8 @@ public class CSVStockage implements StockageInterface {
 	 * @throws StockageStructureException 
 	 */
 	CSVStockage() throws IOException, StockageStructureException {
+		this.entetes = new HashMap<>();
+		
 		final File dossierStockage = new File(CHEMIN_STOCKAGE);
 		if (!dossierStockage.exists())
 			dossierStockage.mkdirs();
@@ -56,9 +59,9 @@ public class CSVStockage implements StockageInterface {
 	public boolean estPresent(TableEnum table, StructureInterface champ, Object valeur) throws StockageAccesException, StockageValeurException {
 		LineNumberReader reader = getReader(table);
 		
-		Map<String, Object> donnee;
+		Map<StructureInterface, Object> donnee;
 		while ((donnee = this.parseLigneSuivante(table, reader)) != null) {
-			if (donnee.get(champ.getValeur()).equals(valeur))
+			if (donnee.get(champ).equals(valeur))
 				return true;
 		}
 		
@@ -86,11 +89,11 @@ public class CSVStockage implements StockageInterface {
 		if (valeurs.size() > table.getChamps().length)
 			throw new IllegalArgumentException("Certains champs passé en paramètre ne sont pas présent dans la table");
 		
-		String ligne = String.join(SEPARATEUR, valeurs.values().stream().map((valeur) -> valeur.toString()).toArray(String[]::new)) + "\n";
-		
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter(new FileWriter(getCSVFile(table), true));
+			String ligne = String.join(SEPARATEUR, trieDonnee(valeurs, getEntete(table))) + "\n";
+			
 			writer.write(ligne);
 		} catch (IOException e) {
 			throw new StockageAccesException("Une erreur est survenu lors de l'accès au CSV", e);
@@ -111,23 +114,18 @@ public class CSVStockage implements StockageInterface {
 		LineNumberReader reader = getReader(table);
 		
 		List<Map<StructureInterface, Object>> donnees = new ArrayList<>();
-		Map<String, Object> donnee;
+		Map<StructureInterface, Object> donnee;
 		while ((donnee = this.parseLigneSuivante(table, reader)) != null) {
 			boolean estOk = true;
 			Iterator<Entry<StructureInterface, Object>> iterateur = valeurs.entrySet().iterator();
 			while (estOk && iterateur.hasNext()) {
 				Entry<StructureInterface, Object> condition = iterateur.next();
 				
-				estOk &= condition.getValue().equals(donnee.get(condition.getKey().getValeur()));
+				estOk &= condition.getValue().equals(donnee.get(condition.getKey()));
 			}
 			
-			if (estOk) {
-				Map<StructureInterface, Object> map = donnee
-						.entrySet()
-						.stream()
-						.collect(Collectors.toMap((entry) -> table.getStructureInterface(entry.getKey()), Map.Entry::getValue));
-				donnees.add(map);
-			}
+			if (estOk)
+				donnees.add(donnee);
 				
 		}
 		
@@ -139,23 +137,18 @@ public class CSVStockage implements StockageInterface {
 	public Map<StructureInterface, Object> getPremiereEntrees(TableEnum table, Map<StructureInterface, Object> valeurs) throws StockageAccesException, StockageValeurException, IllegalArgumentException {
 		LineNumberReader reader = getReader(table);
 		
-		Map<String, Object> donnee;
+		Map<StructureInterface, Object> donnee;
 		while ((donnee = this.parseLigneSuivante(table, reader)) != null) {
 			boolean estOk = true;
 			Iterator<Entry<StructureInterface, Object>> iterateur = valeurs.entrySet().iterator();
 			while (estOk && iterateur.hasNext()) {
 				Entry<StructureInterface, Object> condition = iterateur.next();
 				
-				estOk &= condition.getValue().equals(donnee.get(condition.getKey().getValeur()));
+				estOk &= condition.getValue().equals(donnee.get(condition.getKey()));
 			}
 			
-			if (estOk) {
-				Map<StructureInterface, Object> map = donnee
-						.entrySet()
-						.stream()
-						.collect(Collectors.toMap((entry) -> table.getStructureInterface(entry.getKey()), Map.Entry::getValue));
-				return map;
-			}
+			if (estOk)
+				return donnee;
 				
 		}
 
@@ -171,7 +164,7 @@ public class CSVStockage implements StockageInterface {
 	 * @throws StockageValeurException Levé si une des valeurs attendu n'est pas conforme
 	 * @throws StockageAccesException Levé si le fichier CSV ne peut pas être lu
 	 */
-	private Map<String, Object> parseLigneSuivante(TableEnum table, LineNumberReader reader) throws StockageValeurException, StockageAccesException {
+	private Map<StructureInterface, Object> parseLigneSuivante(TableEnum table, LineNumberReader reader) throws StockageValeurException, StockageAccesException {
 		try {
 			String ligne = reader.readLine();
 			if (ligne == null)
@@ -191,17 +184,17 @@ public class CSVStockage implements StockageInterface {
 	 * @return Une map contenant pour clef le nom des champs de la table et pour valeur la valeur convertie dans sont type théorique
 	 * @throws StockageValeurException Levé si une des valeurs attendu n'est pas conforme
 	 */
-	private Map<String, Object> parse(TableEnum table, String ligne) throws StockageValeurException {
-		Map<String, Object> donnee = new HashMap<>();
-		
+	private Map<StructureInterface, Object> parse(TableEnum table, String ligne) throws StockageValeurException {
+		Map<StructureInterface, Object> donnee = new HashMap<>();
+
 		String[] ligneSplit = ligne.split(SEPARATEUR);
-		StructureInterface[] champs = table.getChamps();
+		StructureInterface[] entete = this.getEntete(table);
 		
-		if (ligneSplit.length != champs.length)
+		if (ligneSplit.length != entete.length)
 			throw new StockageValeurException("La ligne n'a pas le bon nombre de valeur"); 
 		
-		for (int i = 0; i < champs.length; i++) {		
-			Class<?> typeClasse = champs[i].getTypeClasse();
+		for (int i = 0; i < entete.length; i++) {		
+			Class<?> typeClasse = entete[i].getTypeClasse();
 			Object valeur;
 			if (typeClasse.equals(String.class)) {
 				valeur = ligneSplit[i];
@@ -222,9 +215,10 @@ public class CSVStockage implements StockageInterface {
 				throw new IllegalArgumentException("Le type " + typeClasse + "n'est pas supporté");
 			}
 			
-			donnee.put(champs[i].getValeur(), valeur);
+			donnee.put(entete[i], valeur);
 		}
 		
+
 		return donnee;
 	}
 	
@@ -261,6 +255,31 @@ public class CSVStockage implements StockageInterface {
 	}
 	
 	/**
+	 * Trie les données passé en paramètre dans l'odre croissant de nom. Ça permet d'ajoir une consistance lors de l'écriture des données
+	 * @param valeur Les valeurs à trier
+	 * @return les chaînes de caractères des donnnées triées
+	 */
+	private String[] trieDonnee(Map<StructureInterface, Object> valeurs, StructureInterface[] entete) {
+		String[] str = new String[entete.length];
+		for (int i = 0; i < entete.length; i++) {
+			str[i] = valeurs.get(entete[i]).toString();
+		}
+		
+		return str;
+	}
+	
+	/**
+	 * Permet de récupérer l'entête d'une table pour ordonner les valeurs
+	 * @param table La table logique associé à la table physique
+	 * @param reader Le lecteur du fichier CSV
+	 * @return L'entête de la table ordonnée
+	 * @throws StockageAccesException
+	 */
+	private StructureInterface[] getEntete(TableEnum table) {
+		return this.entetes.get(table);
+	}
+	
+	/**
 	 * Initialise un fichier CSV.
 	 * Si le fichier CSV n'existe pas, il est créé avec pour en-tête les champs de table.
 	 * Si le fichier CSV existe déjà, l'en-tête est vérifié. 
@@ -271,7 +290,8 @@ public class CSVStockage implements StockageInterface {
 	 */
 	private void initCSV(File csv, TableEnum table) throws IOException, StockageStructureException{
 		// Récupération des champs de la table
-		String[] nomChamp = Arrays.stream(table.getChamps()).map((valeur) -> valeur.getValeur()).toArray(String[]::new);
+		StructureInterface[] entete = table.getChamps();
+		String[] nomChamp = Arrays.stream(entete).map((valeur) -> valeur.getValeur()).toArray(String[]::new);
 		
 		if (!CSVStockage.FICHIER_UTILISATEUR.exists()) {
 			System.out.println("Création du fichier CSV : " + csv.getAbsolutePath());
@@ -281,6 +301,7 @@ public class CSVStockage implements StockageInterface {
 			try {
 				writer = new BufferedWriter(new FileWriter(csv));
 				writer.write(String.join(SEPARATEUR, nomChamp) + "\n");
+				this.entetes.put(table, entete);
 
 			} catch (IOException e) {
 				System.err.println("Impossible de créer le fichier CSV " + csv.getAbsolutePath());
@@ -302,10 +323,13 @@ public class CSVStockage implements StockageInterface {
 			LineNumberReader reader = null;
 			try {
 				reader = new LineNumberReader(new FileReader(csv));
-				String[] entete = reader.readLine().split(SEPARATEUR);
+				String[] enteteStr = reader.readLine().split(SEPARATEUR);
 				
-				if (!Arrays.equals(entete, nomChamp))
+				// Vérifie l'ordre des champs, si c'est le même ordre c'est ok
+				if (!Arrays.equals(enteteStr, nomChamp))
 					throw new StockageStructureException("L'entête du fichier CSV est incorrect (" + csv.getAbsolutePath() + ")");
+				
+				this.entetes.put(table, entete);				
 			} catch (IOException e) {
 				System.err.println("Impossible de lire le fichier CSV " + csv.getAbsolutePath());
 				throw e;
