@@ -1,7 +1,6 @@
 package controlers.test;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,7 +16,7 @@ public class SimulationGrille extends HttpServlet {
         // Appeler la méthode de simulation
         SimulationPartie.simulerPartie(request.getSession());
 
-        // Rediriger vers l'affichage de la grille
-        response.sendRedirect(request.getContextPath() + "/partie/afficherGrille");
+        // Rediriger vers la page principale de la partie
+        response.sendRedirect(request.getContextPath() + "/partie/principale");
     }
 }

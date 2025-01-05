@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Vérification que les variables nécessaires existent
+    if (typeof joueurConnecte === "undefined" || typeof soldats === "undefined" || typeof joueurs === "undefined") {
+        console.error("Les variables nécessaires (joueurConnecte, soldats, joueurs) ne sont pas définies !");
+        return;
+    }
+
     // Palette de couleurs prédéfinie (max 4 joueurs)
     const palette = ["#0074D9", "#FF4136", "#2ECC40", "#FFDC00"]; // Bleu, Rouge, Vert, Jaune
     const couleurs = {};
