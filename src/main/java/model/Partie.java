@@ -73,6 +73,24 @@ public class Partie {
         }
         return soldats; // Retourne la liste des soldats
     }
+    
+ // Méthode pour récupérer un soldat par ses coordonnées (x, y)
+    public Soldat getSoldatParCoordonnees(int x, int y) {
+        // Parcours des joueurs
+        for (Joueur joueur : joueurs) {
+            if (joueur != null) { // Si le joueur n'est pas nul
+                // Parcours des soldats du joueur
+                for (Soldat soldat : joueur.getSoldats()) {
+                    // Vérifie si le soldat se trouve aux coordonnées (x, y)
+                    if (soldat.getX() == x && soldat.getY() == y) {
+                        return soldat; // Retourne le soldat trouvé
+                    }
+                }
+            }
+        }
+        // Si aucun soldat n'est trouvé aux coordonnées données
+        return null;
+    }
 
     // Méthode pour afficher l'état actuel de la carte
     public void afficherCarte() {

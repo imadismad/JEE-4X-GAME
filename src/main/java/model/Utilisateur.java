@@ -25,6 +25,10 @@ public class Utilisateur {
     public void setJoueur(Joueur j) {
     	this.joueur = j;
     }
+    
+    public Joueur getJoueur() {
+    	return joueur;
+    }
 
     /**
      * Retourne l'objet Joueur associé à cet utilisateur.
