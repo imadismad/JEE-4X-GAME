@@ -5,6 +5,8 @@ import java.util.List; // Interface pour gérer des collections de soldats
 // Importation des bibliothèques nécessaires
 import java.util.Random; // Utilisé pour générer des nombres aléatoires
 
+import controlers.webSocket.ConsoleJeu.ConsoleType;
+
 // Définition de la classe Partie
 public class Partie {
     // Déclaration des constantes pour les dimensions de la carte
@@ -162,7 +164,7 @@ public class Partie {
      */
     private void notifierJoueurs(String message, boolean plateauChange) {
     	for (Joueur joueur : this.getJoueurs()) {
-			//joueur.getWebSocket()
+			joueur.getWebSocket().envoyerMessage(message, plateauChange, ConsoleType.JEUX);
 		}
     }
 }
