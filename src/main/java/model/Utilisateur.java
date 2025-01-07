@@ -39,9 +39,6 @@ public class Utilisateur {
     	this.joueur = j;
     }
     
-    public Joueur getJoueur() {
-    	return joueur;
-    }
 
     /**
      * Retourne l'objet Joueur associé à cet utilisateur.

@@ -51,4 +51,55 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.error("L'élément #legende est introuvable dans le DOM.");
     }
+    
+    const actionsContainer = document.getElementById("actions-container");
+
+    // Appliquer les couleurs et gérer les clics
+    document.querySelectorAll(".soldat").forEach(soldat => {
+        const joueur = soldat.dataset.joueur.trim();
+        if (joueur === joueurConnecte) {
+            // Ajouter un gestionnaire de clic pour les soldats appartenant au joueur connecté
+            soldat.addEventListener("click", () => {
+                const x = soldat.dataset.x;
+                const y = soldat.dataset.y;
+                afficherActionsPourSoldat(x, y);
+            });
+        }
+    });
+
+    // Fonction pour récupérer et afficher les actions possibles
+    function afficherActionsPourSoldat(x, y) {
+	    fetch(`/JEE-4X-GAME/api/actionPossible?x=${x}&y=${y}`)
+	        .then(response => {
+	            if (!response.ok) {
+	                return response.json().then(error => {
+	                    throw new Error(error.error || `Erreur API: ${response.status}`);
+	                });
+	            }
+	            return response.json();
+	        })
+	        .then(actions => {
+	            // Mettre à jour le contenu du panneau d'actions
+	            actionsContainer.innerHTML = ""; // Vider le contenu actuel
+	            Object.entries(actions).forEach(([action, disponible]) => {
+	                if (disponible) {
+	                    const bouton = document.createElement("button");
+	                    bouton.textContent = action;
+	                    bouton.addEventListener("click", () => effectuerAction(x, y, action));
+	                    actionsContainer.appendChild(bouton);
+	                }
+	            });
+	        })
+	        .catch(error => {
+	            console.error("Erreur lors de la récupération des actions possibles :", error.message);
+	            actionsContainer.innerHTML = `<p>${error.message}</p>`;
+	        });
+	}
+
+    // Fonction pour effectuer une action (place un appel à l'API `action` ici)
+    function effectuerAction(x, y, action) {
+        console.log(`Effectuer l'action '${action}' sur (${x}, ${y})`);
+        // Implémentez l'API d'exécution des actions ici
+    }
+    
 });

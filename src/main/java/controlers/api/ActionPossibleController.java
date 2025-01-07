@@ -17,79 +17,80 @@ import java.io.PrintWriter;
 @WebServlet("/api/actionPossible")
 public class ActionPossibleController extends HttpServlet {
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Vérification de l'authentification
-        Joueur joueur = (Joueur) request.getSession().getAttribute("joueur");
-        if (joueur == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
-            return;
-        }
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    response.setContentType("application/json");
 
-        // Vérification que le joueur est dans une partie
-        Partie partie = joueur.getPartie();
-        if (partie == null) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 Forbidden
-            return;
-        }
+	    // Vérification de l'authentification
+	    Joueur joueur = (Joueur) request.getSession().getAttribute("joueur");
+	    if (joueur == null) {
+	        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
+	        response.getWriter().write("{\"error\": \"Utilisateur non authentifié.\"}");
+	        return;
+	    }
 
-        try {
-            // Récupération des coordonnées X et Y
-            int x = Integer.parseInt(request.getParameter("x"));
-            int y = Integer.parseInt(request.getParameter("y"));
+	    // Vérification que le joueur est dans une partie
+	    Partie partie = joueur.getPartie();
+	    if (partie == null) {
+	        response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 Forbidden
+	        response.getWriter().write("{\"error\": \"Vous n'êtes pas dans une partie.\"}");
+	        return;
+	    }
 
-            // Vérification de l'unité à la position donnée
-            Tuile tuile = partie.getTuile(x, y);
-            if (tuile == null) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404 Not Found
-                return;
-            }
+	    try {
+	        // Récupération des coordonnées X et Y
+	        int x = Integer.parseInt(request.getParameter("x"));
+	        int y = Integer.parseInt(request.getParameter("y"));
 
-            // Configuration de la réponse
-            response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_OK); // 200 OK
-            PrintWriter writer = response.getWriter();
+	        // Vérification de l'unité à la position donnée
+	        Tuile tuile = partie.getTuile(x, y);
+	        if (tuile == null) {
+	            response.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404 Not Found
+	            response.getWriter().write("{\"error\": \"Tuile introuvable.\"}");
+	            return;
+	        }
 
-            writer.write("{");
+	        Soldat soldat = tuile.getSoldat(partie);
 
-         // Récupération du soldat sur la tuile
-            Soldat soldat = tuile.getSoldat(partie);
+	        if (soldat != null) {
+	            // Vérifie si le soldat appartient au joueur actuel
+	            if (!soldat.getJoueur().equals(joueur)) {
+	                response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 Forbidden
+	                response.getWriter().write("{\"error\": \"Ce soldat ne vous appartient pas.\"}");
+	                return;
+	            }
 
-            // Vérification qu'un soldat est bien présent sur la tuile
-            if (soldat != null) {
-                // Vérifie si le soldat appartient au joueur actuel
-                if (!soldat.getJoueur().equals(joueur)) {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 Forbidden
-                    writer.close();
-                    return;
-                }
+	            // Vérifie si le soldat est mort
+	            if (soldat.estMort()) {
+	                response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
+	                response.getWriter().write("{\"error\": \"Ce soldat est mort et ne peut pas agir.\"}");
+	                return;
+	            }
 
-                // Vérifie si le soldat est mort
-                if (soldat.estMort()) {
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
-                    writer.close();
-                    return;
-                }
+	            // Actions possibles pour le soldat
+	            response.setStatus(HttpServletResponse.SC_OK); // 200 OK
+	            response.getWriter().write("{");
+	            response.getWriter().write("\"haut\": " + soldat.peutSeDeplacer("haut") + ",");
+	            response.getWriter().write("\"bas\": " + soldat.peutSeDeplacer("bas") + ",");
+	            response.getWriter().write("\"gauche\": " + soldat.peutSeDeplacer("gauche") + ",");
+	            response.getWriter().write("\"droite\": " + soldat.peutSeDeplacer("droite") + ",");
+	            response.getWriter().write("\"defricher\": " + soldat.peutDefricher() + ",");
+	            response.getWriter().write("\"soigner\": " + soldat.peutSeSoigner());
+	            response.getWriter().write("}");
+	            return;
+	        } else if (tuile instanceof Ville) {
+	            Ville ville = (Ville) tuile;
+	            response.setStatus(HttpServletResponse.SC_OK); // 200 OK
+	            response.getWriter().write("{\"recruter\": " + (ville.getAppartenance().getPP() >= 15) + "}");
+	            return;
+	        } else {
+	            response.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404 Not Found
+	            response.getWriter().write("{\"error\": \"Aucun soldat ou action possible sur cette tuile.\"}");
+	        }
 
-                // Ajout des actions possibles pour le soldat
-                writer.write("\"haut\": " + soldat.peutSeDeplacer("haut") + ",");
-                writer.write("\"bas\": " + soldat.peutSeDeplacer("bas") + ",");
-                writer.write("\"gauche\": " + soldat.peutSeDeplacer("gauche") + ",");
-                writer.write("\"droite\": " + soldat.peutSeDeplacer("droite") + ",");
-                writer.write("\"defricher\": " + soldat.peutDefricher() + ",");
-                writer.write("\"soigner\": " + soldat.peutSeSoigner());
-            } else if (tuile instanceof Ville) {
-                Ville ville = (Ville) tuile;
-
-                // Ajout des actions possibles pour la ville
-                writer.write("\"recruter\": " + (ville.getAppartenance().getPP()>=15));
-            }
-
-            writer.write("}");
-            writer.close();
-
-        } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
-        }
-    }
+	    } catch (NumberFormatException e) {
+	        response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
+	        response.getWriter().write("{\"error\": \"Coordonnées invalides.\"}");
+	    }
+	}
 }
