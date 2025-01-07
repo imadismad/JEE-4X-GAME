@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/partie/affichageGrille.css">
 </head>
 <body>
+	<%@ include file="/WEB-INF/jsp/templates/header.jsp" %>
     <div class="partie-container">
         <!-- Section Grille -->
         <div class="grille-section">
@@ -51,8 +52,8 @@
         ];
     </script>
 
-    <!-- Inclusion du fichier JS externe -->
     <script src="<%= request.getContextPath() %>/assets/js/affichageSoldats.js"></script>
+    <%@ include file="/WEB-INF/jsp/templates/footer.jsp" %>
 </body>
 </html>
 
