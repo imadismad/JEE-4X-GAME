@@ -61,6 +61,12 @@ function effectuerAction(x, y, action, direction = null) {
             if (data.status === "success") {
                 console.log(`Action '${action}' effectuée avec succès.`);
                 chargerGrille(); // Recharge toute la grille
+
+                // Vider le volet des actions
+                const actionsContainer = document.getElementById("actions-container");
+                if (actionsContainer) {
+                    actionsContainer.innerHTML = ""; // Vider le panneau
+                }
             } else {
                 console.warn("Détails de la réponse :", data);
             }
@@ -87,10 +93,11 @@ function appliquerColorisationSoldats(couleurs) {
         const joueur = soldat.dataset.joueur ? soldat.dataset.joueur.trim() : null;
         if (joueur && joueur in couleurs) {
             soldat.style.filter = `drop-shadow(0 0 5px ${couleurs[joueur]})`;
+            soldat.style.border = `3px solid ${couleurs[joueur]}`; // Ajout du contour coloré
         } else {
             console.warn(`Aucune couleur définie pour le joueur : ${joueur}`);
-            // Optionnel : Réinitialiser le style si aucune couleur n'est trouvée
             soldat.style.filter = "none";
+            soldat.style.border = "3px solid transparent"; // Réinitialise le contour si non défini
         }
     });
 }

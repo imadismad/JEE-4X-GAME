@@ -13,14 +13,7 @@
     <div class="partie-container">
         <!-- Section Grille -->
         <div class="grille-section">
-            <!-- Conteneur vide rempli par affichageGrille.js -->
-            <div id="grille-container"></div>
-            <div id="legende"></div>
-        </div>
-
-        <!-- Section Actions -->
-        <div class="actions-section">
-            <jsp:include page="/WEB-INF/jsp/partie/affichageActions.jsp" />
+            <jsp:include page="/WEB-INF/jsp/partie/affichageGrille.jsp" />
         </div>
 
         <!-- Section Chat -->
