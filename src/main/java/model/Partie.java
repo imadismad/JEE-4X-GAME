@@ -61,14 +61,11 @@ public class Partie {
             return true; // Inaccessible car montagne
         }
         
-     // Vérifie si un soldat allié est déjà sur cette case
-        for (Joueur joueur : this.getJoueurs()) {
-            if (joueur.equals(s.getJoueur())) { // Vérifie si c'est le même propriétaire
-                for (Soldat soldatAllie : joueur.getSoldats()) {
-                    if (soldatAllie.getX() == x && soldatAllie.getY() == y) {
-                        return true; // Inaccessible car occupée par un allié
-                    }
-                }
+        // Vérifie si un soldat allié est déjà sur cette case
+        Joueur joueur = s.getJoueur();
+        for (Soldat soldatAllie : joueur.getSoldats()) {
+            if (soldatAllie.getX() == x && soldatAllie.getY() == y) {
+                return true; // Inaccessible car occupée par un allié
             }
         }
 
