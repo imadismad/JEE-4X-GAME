@@ -42,6 +42,15 @@ public class GrilleController extends HttpServlet {
                     JSONObject tuileJSON = new JSONObject();
                     tuileJSON.ajouter("type", tuiles[i][j].getType());
 
+                    // Ajouter les informations du propriétaire si c'est une ville
+                    if (tuiles[i][j] instanceof Ville) {
+                        Ville ville = (Ville) tuiles[i][j];
+                        if (ville.getAppartenance() != null) {
+                            tuileJSON.ajouter("proprietaire", ville.getAppartenance().getUtilisateur().getNomUtilisateur());
+                        }
+                    }
+
+                    // Ajouter les informations sur le soldat
                     Soldat soldat = tuiles[i][j].getSoldat(partie);
                     if (soldat != null) {
                         JSONObject soldatJSON = new JSONObject();

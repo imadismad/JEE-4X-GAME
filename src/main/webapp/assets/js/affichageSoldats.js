@@ -102,6 +102,20 @@ function appliquerColorisationSoldats(couleurs) {
     });
 }
 
+function appliquerColorisationVilles(couleurs) {
+    document.querySelectorAll(".ville").forEach(ville => {
+        const joueur = ville.dataset.joueur ? ville.dataset.joueur.trim() : null;
+        if (joueur && joueur in couleurs) {
+            ville.style.borderColor = couleurs[joueur]; // Applique la couleur du propriétaire
+            ville.style.boxShadow = `0 0 10px ${couleurs[joueur]}`; // Ajoute une ombre colorée pour plus de visibilité
+        } else {
+            console.warn(`Aucune couleur définie pour le joueur : ${joueur}`);
+            ville.style.borderColor = "gray"; // Couleur par défaut si pas de propriétaire
+        }
+    });
+}
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     // Charger la grille et écouter les événements pour la colorisation
@@ -110,5 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("grilleChargee", (event) => {
         const { couleurs } = event.detail;
         appliquerColorisationSoldats(couleurs);
+        appliquerColorisationVilles(couleurs);
     });
 });

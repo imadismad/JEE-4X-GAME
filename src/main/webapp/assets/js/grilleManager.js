@@ -38,6 +38,15 @@ function afficherGrille(grille) {
             imgTuile.className = "tuile";
             imgTuile.src = `/JEE-4X-GAME/assets/images/tiles/${normalizeType(cell.type)}.png`;
             imgTuile.alt = cell.type;
+
+            // Ajouter une classe supplémentaire si c'est une ville
+            if (cell.type === "Ville") {
+                imgTuile.classList.add("ville");
+                if (cell.proprietaire) {
+                    imgTuile.dataset.joueur = cell.proprietaire; // Ajouter un dataset pour le propriétaire
+                }
+            }
+
             td.appendChild(imgTuile);
 
             // Ajouter un soldat s'il est présent
@@ -64,6 +73,9 @@ function afficherGrille(grille) {
 
     grilleContainer.appendChild(table);
 }
+
+
+
 
 function mettreAJourLegende(joueurs) {
     const palette = ["#0074D9", "#FF4136", "#2ECC40", "#FFDC00"]; // Bleu, Rouge, Vert, Jaune
