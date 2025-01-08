@@ -29,7 +29,23 @@ public class SimulationPartie {
         // Initialiser la carte
         partie.initialiserCarte();
 
-        // Associer un joueur au session utilisateur pour le test
+        // Ajouter un deuxième soldat pour Joueur1
+        Tuile[][] tuiles = partie.getTuiles();
+
+        for (int i = 0; i < tuiles.length; i++) {
+            for (int j = 0; j < tuiles[i].length; j++) {
+                // Rechercher une case vide pour le deuxième soldat
+                if (!(tuiles[i][j] instanceof Ville) && !tuiles[i][j].contientSoldat(partie)) {
+                    Soldat secondSoldat = new Soldat(i, j, joueur1, partie);
+                    joueur1.ajouterSoldat(secondSoldat);
+                    tuiles[i][j].setPosition(i, j); // Assigner la position sur la tuile
+                    System.out.println("Soldat ajouté pour Joueur1 en position (" + i + ", " + j + ")");
+                    break;
+                }
+            }
+        }
+
+        // Associer un joueur à la session utilisateur pour le test
         // Par exemple : connecter Joueur1
         session.setAttribute(Utilisateur.CLEF_UTILISATEUR_SESSION, utilisateur1);
     }

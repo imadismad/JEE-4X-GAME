@@ -83,6 +83,22 @@ public class JSONArray implements JSONElementInterface {
 		this.valeur.add(new JSONString(valeur));
 	}
 	
+    /**
+     * Ajoute un objet JSON (JSONObject) à la liste.
+     * @param jsonObject L'objet JSON à ajouter
+     */
+    public void ajouter(JSONObject jsonObject) {
+        this.valeur.add(jsonObject);
+    }
+
+    /**
+     * Ajoute un autre JSONArray à la liste.
+     * @param jsonArray Le tableau JSON à ajouter
+     */
+    public void ajouter(JSONArray jsonArray) {
+        this.valeur.add(jsonArray);
+    }
+	
 	@Override
 	public String toString() {
 		boolean premierElement = true;
@@ -105,4 +121,21 @@ public class JSONArray implements JSONElementInterface {
 	public Object getValeur() {
 		return this.valeur;
 	}
+	
+    @Override
+    public String toJSONString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[");
+        boolean premierElement = true;
+        for (JSONElementInterface element : valeur) {
+            if (premierElement) {
+                premierElement = false;
+            } else {
+                builder.append(",");
+            }
+            builder.append(element.toJSONString());
+        }
+        builder.append("]");
+        return builder.toString();
+    }
 }
