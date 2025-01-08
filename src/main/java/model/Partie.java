@@ -47,7 +47,7 @@ public class Partie {
      * @param y La coordonnée Y de la tuile
      * @return true si la tuile est inaccessible, false sinon
      */
-    public boolean estTuileInaccessible(int x, int y) {
+    public boolean estTuileInaccessible(int x, int y, Soldat s) {
         // Vérifie si les coordonnées sont hors des limites de la carte
         if (x < 0 || x >= MAX_X || y < 0 || y >= MAX_Y) {
             return true; // Hors limites
@@ -59,6 +59,17 @@ public class Partie {
         // Vérifie si la tuile est une montagne (ou tout autre type inaccessible)
         if (tuile instanceof Montagne) {
             return true; // Inaccessible car montagne
+        }
+        
+     // Vérifie si un soldat allié est déjà sur cette case
+        for (Joueur joueur : this.getJoueurs()) {
+            if (joueur.equals(s.getJoueur())) { // Vérifie si c'est le même propriétaire
+                for (Soldat soldatAllie : joueur.getSoldats()) {
+                    if (soldatAllie.getX() == x && soldatAllie.getY() == y) {
+                        return true; // Inaccessible car occupée par un allié
+                    }
+                }
+            }
         }
 
         // Sinon, la tuile est accessible
