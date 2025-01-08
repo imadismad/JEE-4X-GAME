@@ -28,6 +28,7 @@ public class Foret extends Tuile {
         
     		// Ajouter les points de production pour le défrichage
     		soldat.getJoueur().ajouterPP(10); // Récompense de 10 PP pour le défrichage
+    		soldat.getPartie().incrementerTour();
     		
     	} else {
     		// Si la tuile n'est pas une forêt, informe que le défrichage n'est pas possible

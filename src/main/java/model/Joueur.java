@@ -102,6 +102,7 @@ public class Joueur {
             this.ajouterSoldat(soldat); // Ajoute le soldat à la liste du joueur
 
             System.out.println("Un soldat a été créé sur la ville " + ville + " pour un coût de 15 PP.");
+            this.getPartie().incrementerTour();
             return true;
         } else {
             System.out.println("Pas assez de PP pour créer un soldat sur cette ville.");
