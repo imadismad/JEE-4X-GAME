@@ -155,16 +155,16 @@ public class Soldat {
     
     public boolean peutSeDeplacer(String direction) {
         switch (direction) {
-            case "haut": return !partie.estTuileInaccessible(x - 1, y);
-            case "bas": return !partie.estTuileInaccessible(x + 1, y);
-            case "gauche": return !partie.estTuileInaccessible(x, y - 1);
-            case "droite": return !partie.estTuileInaccessible(x, y + 1);
+            case "haut": return !partie.estTuileInaccessible(x - 1, y,this);
+            case "bas": return !partie.estTuileInaccessible(x + 1, y,this);
+            case "gauche": return !partie.estTuileInaccessible(x, y - 1,this);
+            case "droite": return !partie.estTuileInaccessible(x, y + 1,this);
             default: return false;
         }
     }
 
     public boolean peutDefricher() {
-        return this.getPartie().getTuile(this.getX(), this.getY()) instanceof Foret;
+        return this.getPartie().getTuile(this.getX(), this.getY()).getType() == "Forêt";
     }
 
     public boolean peutSeSoigner() {
