@@ -23,4 +23,9 @@ class JSONNumber<T extends Number> implements JSONElementInterface {
 	public Object getValeur() {
 		return this.valeur;
 	}
+	
+    @Override
+    public String toJSONString() {
+        return this.valeur.toString(); // Retourne directement la valeur, car les nombres n'ont pas besoin de guillemets
+    }
 }

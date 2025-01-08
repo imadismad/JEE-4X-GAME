@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd" id="WebApp_ID" version="5.0">
   <display-name>JEE-4X-GAME</display-name>
   <welcome-file-list>
@@ -9,14 +8,16 @@
     <welcome-file>default.jsp</welcome-file>
     <welcome-file>default.htm</welcome-file>
   </welcome-file-list>
+
+  <!-- Initialisation -->
   <servlet>
     <servlet-name>TomcatInitServlet</servlet-name>
     <servlet-class>controlers.TomcatInitServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
+
+  <!-- HelloWorld Servlet -->
   <servlet>
-    <description></description>
-    <display-name>HelloWorld</display-name>
     <servlet-name>HelloWorld</servlet-name>
     <servlet-class>controlers.api.HelloWorld</servlet-class>
   </servlet>
@@ -24,9 +25,9 @@
     <servlet-name>HelloWorld</servlet-name>
     <url-pattern>/api</url-pattern>
   </servlet-mapping>
+
+  <!-- Gestion des comptes -->
   <servlet>
-    <description></description>
-    <display-name>Creation</display-name>
     <servlet-name>Creation</servlet-name>
     <servlet-class>controlers.compte.Creation</servlet-class>
   </servlet>
@@ -35,13 +36,31 @@
     <url-pattern>/compte/creation</url-pattern>
   </servlet-mapping>
   <servlet>
-    <description></description>
-    <display-name>Connexion</display-name>
     <servlet-name>Connexion</servlet-name>
     <servlet-class>controlers.compte.Connexion</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>Connexion</servlet-name>
     <url-pattern>/compte/connexion</url-pattern>
+  </servlet-mapping>
+
+  <!-- Simulation de partie -->
+  <servlet>
+    <servlet-name>SimulationGrille</servlet-name>
+    <servlet-class>controlers.test.SimulationGrille</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SimulationGrille</servlet-name>
+    <url-pattern>/test/simulerPartie</url-pattern>
+  </servlet-mapping>
+
+  <!-- Partie principale -->
+  <servlet>
+    <servlet-name>PartiePrincipale</servlet-name>
+    <servlet-class>controlers.partie.PartiePrincipale</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PartiePrincipale</servlet-name>
+    <url-pattern>/partie/principale</url-pattern>
   </servlet-mapping>
 </web-app>

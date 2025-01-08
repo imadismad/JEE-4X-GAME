@@ -25,4 +25,9 @@ class JSONString implements JSONElementInterface {
 	public Object getValeur() {
 		return this.valeur;
 	}
+
+    @Override
+    public String toJSONString() {
+        return "\"" + this.valeur.replace("\"", "\\\"") + "\""; // Ajoute des guillemets et échappe les caractères spéciaux
+    }
 }

@@ -11,4 +11,11 @@ interface JSONElementInterface {
 	 * @return la valeur de l'élement
 	 */
 	Object getValeur();
+	
+    /**
+     * Renvoie une représentation JSON de cet élément.
+     * 
+     * @return la chaîne JSON.
+     */
+    String toJSONString();
 }

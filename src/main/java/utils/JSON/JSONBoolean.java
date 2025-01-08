@@ -23,4 +23,9 @@ class JSONBoolean implements JSONElementInterface {
 	public Object getValeur() {
 		return this.valeur;
 	}
+	
+    @Override
+    public String toJSONString() {
+        return this.valeur.toString(); // Retourne "true" ou "false"
+    }
 }

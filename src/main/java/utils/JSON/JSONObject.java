@@ -118,6 +118,24 @@ public class JSONObject implements JSONElementInterface {
 		builder.append("}");
 		return builder.toString();
 	}
+	
+    @Override
+    public String toJSONString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("{");
+        boolean premierElement = true;
+        for (Map.Entry<String, JSONElementInterface> entree : map.entrySet()) {
+            if (premierElement) {
+                premierElement = false;
+            } else {
+                builder.append(",");
+            }
+            builder.append("\"").append(entree.getKey()).append("\":")
+                   .append(entree.getValue().toJSONString());
+        }
+        builder.append("}");
+        return builder.toString();
+    }
 
 	@Override
 	public Object getValeur() {
