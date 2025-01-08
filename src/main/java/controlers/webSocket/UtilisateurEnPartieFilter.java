@@ -33,10 +33,10 @@ public class UtilisateurEnPartieFilter implements Filter {
 			return;
 		}
 		
-		/*if (!Utilisateur.getUtilisateur(session).estEnPartie()) {
+		if (!Utilisateur.getUtilisateur(session).estEnPartie()) {
 			((HttpServletResponse) res).setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return;
-		}*/
+		}
 		
 		chain.doFilter(req, res);
 	}
