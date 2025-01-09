@@ -3,16 +3,25 @@ package model;
 import jakarta.servlet.http.HttpSession;
 
 public class SimulationPartie {
+	
+	private static SimulationPartie partie;
+	
+	public Utilisateur utilisateur1;
+	public Utilisateur utilisateur2;
+	public Utilisateur utilisateur3;
+	public Utilisateur utilisateur4;
+	
+	private int nbJoueur = 0;
 
-    public static void simulerPartie(HttpSession session) {
+    public SimulationPartie() {
         // Initialiser une nouvelle partie
         Partie partie = new Partie();
 
         // Créer des utilisateurs
-        Utilisateur utilisateur1 = new Utilisateur("Joueur1", null);
-        Utilisateur utilisateur2 = new Utilisateur("Joueur2", null);
-        Utilisateur utilisateur3 = new Utilisateur("Joueur3", null);
-//        Utilisateur utilisateur4 = new Utilisateur("Joueur4", null);
+        utilisateur1 = new Utilisateur("Joueur1", null);
+        utilisateur2 = new Utilisateur("Joueur2", null);
+        utilisateur3 = new Utilisateur("Joueur3", null);
+//      utilisateur4 = new Utilisateur("Joueur4", null);
 
         // Associer les utilisateurs à des joueurs
         Joueur joueur1 = new Joueur(utilisateur1, partie);
@@ -45,8 +54,21 @@ public class SimulationPartie {
             }
         }
 
+    }
+    
+    public static void rejoindrePartie(HttpSession session) {
+    	if (partie == null) partie = new SimulationPartie();
         // Associer un joueur à la session utilisateur pour le test
         // Par exemple : connecter Joueur1
-        session.setAttribute(Utilisateur.CLEF_UTILISATEUR_SESSION, utilisateur1);
+    	
+    	if (partie.nbJoueur == 0) {
+    		session.setAttribute(Utilisateur.CLEF_UTILISATEUR_SESSION, partie.utilisateur1);
+    	} else if (partie.nbJoueur == 1) {
+    		session.setAttribute(Utilisateur.CLEF_UTILISATEUR_SESSION, partie.utilisateur2);
+    	}else if (partie.nbJoueur == 2) {
+    		session.setAttribute(Utilisateur.CLEF_UTILISATEUR_SESSION, partie.utilisateur3);
+    	}
+       partie.nbJoueur++;
+
     }
 }

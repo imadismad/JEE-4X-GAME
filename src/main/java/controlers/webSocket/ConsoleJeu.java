@@ -6,6 +6,7 @@ import jakarta.websocket.OnMessage;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
+import model.Joueur;
 import model.Utilisateur;
 import utils.JSON.JSONObject;
 
@@ -53,7 +54,11 @@ public class ConsoleJeu {
 	@OnMessage
 	public void OnMessage(String message, Session session) {
 		final String chatMsg = getUtilisateur().getNomUtilisateur() + " : " + message;
-		envoyerMessage(chatMsg, false, ConsoleType.CHAT);
+		for (Joueur joueur : this.getUtilisateur().getJoueur().getPartie().getJoueurs()) {
+			if (joueur != null && joueur.getWebSocket() != null)
+				joueur.getWebSocket().envoyerMessage(chatMsg, false, ConsoleType.CHAT);
+		}
+		
 	}
 	
 	/**
