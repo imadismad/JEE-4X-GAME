@@ -5,17 +5,7 @@
 %>
 <div id="chat">
     <h3>Chat du jeu</h3>
-    <div id="chat-messages">
-        <ul>
-            <% 
-                if (chatMessages != null) {
-                    for (String message : chatMessages) {
-            %>
-                <li><%= message %></li>
-            <% 
-                    }
-                }
-            %>
-        </ul>
-    </div>
+    <ul id="console">
+        
+    </ul>
 </div>

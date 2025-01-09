@@ -34,7 +34,18 @@ public class Soldat {
     // Méthode pour soigner le soldat
     public void soin() {
         int soin = (int) (Math.random() * 3) + 2; // Génère un soin entre 2 et 4 points
+        int vieDepart = this.getVie();
         vie = Math.min(vie + soin, 15); // Limite les points de vie à un maximum de 15
+        this.getPartie().notifierJoueurs(
+    		String.format(
+				"%s a soigné sont joueur en (%d, %d) qui récupère %d point de vie",
+				this.getJoueur().getUtilisateur().getNomUtilisateur(),
+				this.getX(),
+				this.getY(),
+				this.getVie() - vieDepart
+			),
+    		true
+		);
     }
 
     // Getter pour récupérer les points de vie actuels du soldat
@@ -91,9 +102,32 @@ public class Soldat {
                     System.out.println("Soldat ennemi éliminé. Vous prenez sa place.");
                     soldatCible.getJoueur().retirerSoldat(soldatCible); // Retrait du soldat ennemi
                     this.getJoueur().addScore(10); // Ajout de points pour l'élimination
+                    
+                    this.getPartie().notifierJoueurs(
+                		String.format(
+            				"%s a tué l'unité de %s en (%d, %d), il gagne 10 points.",
+            				this.getJoueur().getUtilisateur().getNomUtilisateur(),
+            				soldatCible.getJoueur().getUtilisateur().getNomUtilisateur(),
+            				soldatCible.getX(),
+            				soldatCible.getY()
+            			),
+                		dep
+                	);
                 } else {
                     System.out.println("Soldat ennemi encore en vie.");
                     dep = false; // Annule le déplacement
+                    
+                    this.getPartie().notifierJoueurs(
+                		String.format(
+            				"%s a attaqué l'unité de %s en (%d, %d) qui a perdu %d point de vie.",
+            				this.getJoueur().getUtilisateur().getNomUtilisateur(),
+            				soldatCible.getJoueur().getUtilisateur().getNomUtilisateur(),
+            				soldatCible.getX(),
+            				soldatCible.getY(),
+            				forceAttaque
+            			),
+                		dep
+                	);
                 }
             } else {
                 System.out.println("Case occupée par un allié. Déplacement annulé.");
@@ -112,6 +146,7 @@ public class Soldat {
                 ville.loseDP(forceAttaqueVille); // Réduction des points de défense de la ville
                 if (ville.getDP() <= 0) {
                     System.out.println("Ville capturée !");
+                    Joueur ancienProprio = ville.getAppartenance();
                     ville.setAppartenance(this.getJoueur()); // Changement de propriétaire
                     this.getJoueur().addScore(50); // Ajout de points pour la capture
 
@@ -125,9 +160,32 @@ public class Soldat {
                             dep = true; // Autorise le déplacement
                         }
                     }
+                    
+                    this.getPartie().notifierJoueurs(
+                		String.format(
+            				"%s a capturé la ville de %s en (%d, %d), il gagne 50 points.",
+            				this.getJoueur().getUtilisateur().getNomUtilisateur(),
+            				ancienProprio.getUtilisateur().getNomUtilisateur(),
+            				ville.getX(),
+            				ville.getY()
+            			),
+                		dep
+                	);
                 } else {
                     System.out.println("Points de Défense restants : " + ville.getDP());
                     dep = false; // Annule le déplacement
+                    
+                    this.getPartie().notifierJoueurs(
+                		String.format(
+            				"%s a attaqué la ville de %s en (%d, %d) qui perd %d point de vie.",
+            				this.getJoueur().getUtilisateur().getNomUtilisateur(),
+            				ville.getAppartenance().getUtilisateur().getNomUtilisateur(),
+            				ville.getX(),
+            				ville.getY(),
+            				forceAttaqueVille
+            			),
+                		dep
+                	);
                 }
             } else {
                 System.out.println("Ville alliée détectée. Pas d'attaque possible.");
@@ -139,6 +197,15 @@ public class Soldat {
             this.setX(nx);
             this.setY(ny);
             System.out.println("Soldat déplacé en direction de " + direction + " vers (" + nx + ", " + ny + ")");
+            this.getPartie().notifierJoueurs(
+        		String.format(
+    				"%s déplace son unité en (%d, %d).",
+    				this.getJoueur().getUtilisateur().getNomUtilisateur(),
+    				this.getX(),
+    				this.getY()
+    			),
+        		dep
+        	);
         }
     }
 

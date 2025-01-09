@@ -152,6 +152,7 @@ public class Partie {
         if (nombreJoueurs < joueurs.length) { // Vérifie s'il reste de la place
             joueurs[nombreJoueurs++] = joueur; // Ajoute le joueur et incrémente le compteur
             System.out.println("Joueur " + joueur.getUtilisateur().getNomUtilisateur() + " ajouté à la partie.");
+            this.notifierJoueurs(joueur.getUtilisateur().getNomUtilisateur() + " à rejoind la partie.", false);
         } else {
             System.out.println("Partie pleine, impossible d'ajouter un autre joueur.");
         }
@@ -205,9 +206,10 @@ public class Partie {
      * @param message Le message associé a ce changement
      * @param plateauChange Indique si le plateau a changer. C'est a dire, indique si une entité a été créée ou déplacé, si une ville a été capturé, etc. 
      */
-    private void notifierJoueurs(String message, boolean plateauChange) {
+    public void notifierJoueurs(String message, boolean plateauChange) {
     	for (Joueur joueur : this.getJoueurs()) {
-			joueur.getWebSocket().envoyerMessage(message, plateauChange, ConsoleType.JEUX);
+    		if (joueur != null && joueur.getWebSocket() != null)
+    			joueur.getWebSocket().envoyerMessage(message, plateauChange, ConsoleType.JEUX);
 		}
     }
 }

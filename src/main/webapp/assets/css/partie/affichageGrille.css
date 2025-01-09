@@ -105,3 +105,26 @@ td {
     #actions-container button:hover {
         background-color: #0053A4;
     }
+
+
+/* Console */
+#chat {
+	max-height: 220px;
+  	display: flex;
+  	flex-direction: column;
+}
+#console {
+	background-color: #f4f0ec;
+	border: 1px solid black;
+	padding: 6px;
+	list-style-type: none;
+	overflow: scroll;
+}
+
+#console > li + li {
+	margin-top: 4px;
+}
+
+#console > li.jeux {
+	font-style: italic;
+}

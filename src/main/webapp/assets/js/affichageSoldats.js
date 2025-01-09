@@ -59,7 +59,7 @@ function effectuerAction(x, y, action, direction = null) {
         })
         .then(data => {
             if (data.status === "success") {
-                console.log(`Action '${action}' effectuée avec succès.`);
+                //console.log(`Action '${action}' effectuée avec succès.`);
                 chargerGrille(); // Recharge toute la grille
 
                 // Vider le volet des actions

@@ -66,7 +66,7 @@ public class Connexion extends HttpServlet {
 		} 
         
         // Redirection
-        response.sendRedirect(getServletContext().getContextPath() + "/dummyPage.html");
+        response.sendRedirect(getServletContext().getContextPath() + "/test/simulerPartie");
 
 	}
 	

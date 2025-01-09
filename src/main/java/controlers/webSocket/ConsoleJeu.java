@@ -41,7 +41,7 @@ public class ConsoleJeu {
 		// Pour des raison de praticité, on va garder la même clef
 		this.utili = (Utilisateur) conf.getUserProperties().get(WebSocketHandshake.ENDPOINT_CONFIG_UITL_CLEF);
 		this.webSocket = session;
-		//utili.getJoueur().setWebSocket(this);
+		utili.getJoueur().setWebSocket(this);
 	}
 	
 	@OnClose
@@ -67,7 +67,7 @@ public class ConsoleJeu {
 		json.ajouter(CLEF_JSON_MSG, message);
 		json.ajouter(CLEF_JSON_RECHARG_GRILL, majPlateau);
 		
-		getWebSocket().getAsyncRemote().sendText(json.toString());
+		getWebSocket().getAsyncRemote().sendText(json.toJSONString());
 	}
 	
 	private Utilisateur getUtilisateur() {

@@ -33,6 +33,7 @@
 	</script>
 	<script src="<%= request.getContextPath() %>/assets/js/grilleManager.js"></script>
 	<script src="<%= request.getContextPath() %>/assets/js/affichageSoldats.js"></script>
+	<script src="<%= request.getContextPath() %>/assets/js/consoleJeu.js"></script>
 
     <%@ include file="/WEB-INF/jsp/templates/footer.jsp" %>
 </body>
