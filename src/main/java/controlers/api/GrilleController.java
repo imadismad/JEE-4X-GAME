@@ -10,6 +10,7 @@ import utils.JSON.*;
 
 import java.io.IOException;
 
+@SuppressWarnings("serial")
 @WebServlet("/api/grille")
 public class GrilleController extends HttpServlet {
 

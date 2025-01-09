@@ -1,4 +1,11 @@
+let actionOk = false;
+function peutFaireAction(action) {
+	actionOk = action
+}
+
 function afficherActionsPourSoldat(x, y) {
+	if (actionOk !== true)
+		return;
     fetch(`/JEE-4X-GAME/api/actionPossible?x=${x}&y=${y}`)
         .then(response => {
             if (!response.ok) {
@@ -37,6 +44,8 @@ function afficherActionsPourSoldat(x, y) {
 }
 
 function effectuerAction(x, y, action, direction = null) {
+	if (actionOk !== true)
+		return;
     const params = new URLSearchParams({ x, y, action });
     if (direction) {
         params.append("direction", direction); // Ajout de la direction pour les déplacements

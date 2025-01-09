@@ -1,5 +1,7 @@
 package controlers.api;
 
+import java.io.IOException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,9 +13,7 @@ import model.Soldat;
 import model.Tuile;
 import model.Ville;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
+@SuppressWarnings("serial")
 @WebServlet("/api/actionPossible")
 public class ActionPossibleController extends HttpServlet {
 

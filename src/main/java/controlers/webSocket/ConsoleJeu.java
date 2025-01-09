@@ -7,6 +7,7 @@ import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
 import model.Joueur;
+import model.Partie;
 import model.Utilisateur;
 import utils.JSON.JSONObject;
 
@@ -28,6 +29,7 @@ public class ConsoleJeu {
 	private static final String CLEF_JSON_TYPE = "type";
 	private static final String CLEF_JSON_MSG = "message";
 	private static final String CLEF_JSON_RECHARG_GRILL = "rechargerGrille";
+	private static final String CLEF_JSON_TOUR_DE = "tourDe";
 
 	private Utilisateur utili;
 	private Session webSocket;
@@ -43,12 +45,14 @@ public class ConsoleJeu {
 		this.utili = (Utilisateur) conf.getUserProperties().get(WebSocketHandshake.ENDPOINT_CONFIG_UITL_CLEF);
 		this.webSocket = session;
 		utili.getJoueur().setWebSocket(this);
+		
+		this.envoyerMessage("Bienvenue " + this.getUtilisateur().getNomUtilisateur(), false, ConsoleType.JEUX);
 	}
 	
 	@OnClose
 	public void onClose(Session session) {
 		// TODO Auto-generated method stub
-
+		this.getUtilisateur().getJoueur().setWebSocket(null);
 	}
 	
 	@OnMessage
@@ -67,10 +71,15 @@ public class ConsoleJeu {
 	 * @param majPlateau true si le plateau doit être mise à jour
 	 */
 	public void envoyerMessage(String message, boolean majPlateau, ConsoleType type) {
+		Partie partie = this.getUtilisateur().getJoueur().getPartie();
 		JSONObject json = new JSONObject();
 		json.ajouter(CLEF_JSON_TYPE, type.toString());
 		json.ajouter(CLEF_JSON_MSG, message);
 		json.ajouter(CLEF_JSON_RECHARG_GRILL, majPlateau);
+		if (partie.estTourDe(this.getUtilisateur().getJoueur()))
+			json.ajouter(CLEF_JSON_TOUR_DE, false);
+		else
+			json.ajouter(CLEF_JSON_TOUR_DE, partie.getJoueurs()[partie.getTour()].getUtilisateur().getNomUtilisateur());
 		
 		getWebSocket().getAsyncRemote().sendText(json.toJSONString());
 	}

@@ -34,6 +34,10 @@ public class Partie {
         return tour;
     }
     
+    public boolean estTourDe(Joueur joueur) {
+    	return this.getJoueurs()[this.getTour()] == joueur;
+    }
+    
     public void incrementerTour() {
         this.tour+=1;
         this.tour=this.tour%this.nombreJoueurs;
