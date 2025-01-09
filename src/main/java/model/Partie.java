@@ -17,12 +17,26 @@ public class Partie {
     private Joueur[] joueurs; // Tableau pour stocker les joueurs participant à la partie
     private Tuile[][] tuiles; // Grille représentant les tuiles de la carte
     private int nombreJoueurs; // Nombre actuel de joueurs dans la partie
+    
+    //Attribut sur le tour
+    public int tour;
 
     // Constructeur par défaut de la classe Partie
     public Partie() {
         this.joueurs = new Joueur[4]; // Initialise le tableau avec un maximum de 4 joueurs
         this.tuiles = new Tuile[MAX_X][MAX_Y]; // Initialise la grille de tuiles
         this.nombreJoueurs = 0; // Initialise le nombre de joueurs à 0
+        this.tour = 0;
+    }
+    
+    //Récupérer le tour
+    public int getTour() {
+        return tour;
+    }
+    
+    public void incrementerTour() {
+        this.tour+=1;
+        this.tour=this.tour%this.nombreJoueurs;
     }
 
     // Getter pour obtenir le tableau des joueurs

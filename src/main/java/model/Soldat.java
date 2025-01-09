@@ -36,6 +36,8 @@ public class Soldat {
         int soin = (int) (Math.random() * 3) + 2; // Génère un soin entre 2 et 4 points
         int vieDepart = this.getVie();
         vie = Math.min(vie + soin, 15); // Limite les points de vie à un maximum de 15
+
+        this.getPartie().incrementerTour();
         this.getPartie().notifierJoueurs(
     		String.format(
 				"%s a soigné sont joueur en (%d, %d) qui récupère %d point de vie",
@@ -196,6 +198,7 @@ public class Soldat {
         if (dep) {
             this.setX(nx);
             this.setY(ny);
+            this.getPartie().incrementerTour();
             System.out.println("Soldat déplacé en direction de " + direction + " vers (" + nx + ", " + ny + ")");
             this.getPartie().notifierJoueurs(
         		String.format(
