@@ -33,8 +33,7 @@ public class Partie {
     }
     
     public void incrementerTour() {
-        this.tour+=1;
-        this.tour=this.tour%this.nombreJoueurs;
+        this.tour=(this.tour + 1) % this.nombreJoueurs;
     }
 
     // Getter pour obtenir le tableau des joueurs
