@@ -55,8 +55,12 @@ public class PartiesManager {
     static {
         // e.g. "1234" => up to 4 players
         lobbies.put("1234", new LobbyPartie(4));
-        // e.g. "7890" => up to 2 players
-        lobbies.put("1232", new LobbyPartie(2));
+        lobbies.put("2234", new LobbyPartie(4));
+        lobbies.put("3234", new LobbyPartie(4));
+        // e.g. "1232" => up to 2 players
+        lobbies.put("1232", new LobbyPartie(2));        // e.g. "1232" => up to 2 players
+        lobbies.put("2232", new LobbyPartie(2));        // e.g. "1232" => up to 2 players
+        lobbies.put("3232", new LobbyPartie(2));
     }
 
     // -------------------------------------------------
