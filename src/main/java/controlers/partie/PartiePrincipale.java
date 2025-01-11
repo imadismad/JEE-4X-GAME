@@ -22,12 +22,11 @@ public class PartiePrincipale extends HttpServlet {
             return;
         }
 
-        // Messages du chat (exemple)
-        List<String> chatMessages = List.of("Joueur1 a capturé une ville", "Joueur2 a déplacé un soldat");
-
-        // Définir les données contextuelles pour la vue
-        request.setAttribute("joueurTour", utilisateur.getJoueur().getPartie().getJoueurs()[0].getUtilisateur().getNomUtilisateur()); // Exemple
-        request.setAttribute("chatMessages", chatMessages);
+        if (utilisateur.getJoueur().getPartie().estFin()) {
+        	response.setStatus(480);
+        	response.getWriter().write("La partie est déjà terminée");
+        	return;
+        }
 
         // Rediriger vers la JSP principale
         request.getRequestDispatcher("/WEB-INF/jsp/partie/partiePrincipale.jsp").forward(request, response);

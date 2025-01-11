@@ -23,7 +23,7 @@ import utils.JSON.JSONObject;
 public class ConsoleJeu {
 	
 	public enum ConsoleType {
-		JEUX, CHAT;
+		JEUX, CHAT, FIN_PARTIE;
 	}
 	
 	private static final String CLEF_JSON_TYPE = "type";
@@ -51,18 +51,20 @@ public class ConsoleJeu {
 	
 	@OnClose
 	public void onClose(Session session) {
-		// TODO Auto-generated method stub
 		this.getUtilisateur().getJoueur().setWebSocket(null);
 	}
 	
 	@OnMessage
 	public void OnMessage(String message, Session session) {
+		chatAll(message);		
+	}
+	
+	private void chatAll(String message) {
 		final String chatMsg = getUtilisateur().getNomUtilisateur() + " : " + message;
 		for (Joueur joueur : this.getUtilisateur().getJoueur().getPartie().getJoueurs()) {
 			if (joueur != null && joueur.getWebSocket() != null)
 				joueur.getWebSocket().envoyerMessage(chatMsg, false, ConsoleType.CHAT);
 		}
-		
 	}
 	
 	/**

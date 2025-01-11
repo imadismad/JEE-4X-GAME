@@ -18,15 +18,28 @@ public class Partie {
     private Tuile[][] tuiles; // Grille représentant les tuiles de la carte
     private int nombreJoueurs; // Nombre actuel de joueurs dans la partie
     
+    private boolean estFin = false;
+    
     //Attribut sur le tour
     public int tour;
 
+    
+    
     // Constructeur par défaut de la classe Partie
     public Partie() {
         this.joueurs = new Joueur[4]; // Initialise le tableau avec un maximum de 4 joueurs
         this.tuiles = new Tuile[MAX_X][MAX_Y]; // Initialise la grille de tuiles
         this.nombreJoueurs = 0; // Initialise le nombre de joueurs à 0
         this.tour = 0;
+    }
+    
+    /**
+     * Permet de savoir si la partie est terminé.
+     * La partie est considéré terminé si la fonction de notification de fin de la partie a été appelé
+     * @return
+     */
+    public boolean estFin() {
+    	return estFin;
     }
     
     //Récupérer le tour
@@ -39,8 +52,13 @@ public class Partie {
     }
     
     public void incrementerTour() {
-        this.tour+=1;
-        this.tour=this.tour%this.nombreJoueurs;
+    	int tourDepart = this.getTour();
+    	
+    	do {
+    		this.tour+=1;
+            this.tour=this.tour%this.nombreJoueurs;
+    	} while(tourDepart != this.getTour() && this.getJoueurs()[this.getTour()].hasSoldatsEtVilles());
+        
     }
 
     // Getter pour obtenir le tableau des joueurs
@@ -238,4 +256,21 @@ public class Partie {
     			joueur.getWebSocket().envoyerMessage(message, plateauChange, ConsoleType.JEUX);
 		}
     }
+    
+    /**
+     * Permet de notifier la fin de la partie à tous les joueurs$
+     * Cette fonction coupe aussi le lien entre les joueurs et la partie.
+     */
+    public void notifierFinPartie() {
+    	Joueur dernierJoueur = this.getJoueurs()[this.getTour()];
+    	dernierJoueur.addScore(100);
+    	String message = "Fin de la partie, victoire de "+dernierJoueur.getUtilisateur().getNomUtilisateur();
+
+    	for (Joueur joueur : this.getJoueurs()) {
+    		if (joueur != null && joueur.getWebSocket() != null) {
+				joueur.getWebSocket().envoyerMessage(message, false, ConsoleType.FIN_PARTIE);
+    			
+    		}
+    	}
+	}
 }
