@@ -13,6 +13,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+.classpath
 
 # External tool builders
 .externalToolBuilders/
@@ -94,3 +95,6 @@ hs_err_pid*
 replay_pid*
 
 # End of https://www.toptal.com/developers/gitignore/api/eclipse,java
+
+stockage/
+/target/

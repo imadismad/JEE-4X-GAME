@@ -1,9 +1,11 @@
 package model;
 
-// Importation des bibliothèques nécessaires
-import java.util.Random; // Utilisé pour générer des nombres aléatoires
 import java.util.ArrayList; // Utilisé pour gérer une liste dynamique de soldats
 import java.util.List; // Interface pour gérer des collections de soldats
+// Importation des bibliothèques nécessaires
+import java.util.Random; // Utilisé pour générer des nombres aléatoires
+
+import controlers.webSocket.ConsoleJeu.ConsoleType;
 
 // Définition de la classe Partie
 public class Partie {
@@ -15,12 +17,30 @@ public class Partie {
     private Joueur[] joueurs; // Tableau pour stocker les joueurs participant à la partie
     private Tuile[][] tuiles; // Grille représentant les tuiles de la carte
     private int nombreJoueurs; // Nombre actuel de joueurs dans la partie
+    
+    //Attribut sur le tour
+    public int tour;
 
     // Constructeur par défaut de la classe Partie
     public Partie() {
         this.joueurs = new Joueur[4]; // Initialise le tableau avec un maximum de 4 joueurs
         this.tuiles = new Tuile[MAX_X][MAX_Y]; // Initialise la grille de tuiles
         this.nombreJoueurs = 0; // Initialise le nombre de joueurs à 0
+        this.tour = 0;
+    }
+    
+    //Récupérer le tour
+    public int getTour() {
+        return tour;
+    }
+    
+    public boolean estTourDe(Joueur joueur) {
+    	return this.getJoueurs()[this.getTour()] == joueur;
+    }
+    
+    public void incrementerTour() {
+        this.tour+=1;
+        this.tour=this.tour%this.nombreJoueurs;
     }
 
     // Getter pour obtenir le tableau des joueurs
@@ -45,7 +65,7 @@ public class Partie {
      * @param y La coordonnée Y de la tuile
      * @return true si la tuile est inaccessible, false sinon
      */
-    public boolean estTuileInaccessible(int x, int y) {
+    public boolean estTuileInaccessible(int x, int y, Soldat s) {
         // Vérifie si les coordonnées sont hors des limites de la carte
         if (x < 0 || x >= MAX_X || y < 0 || y >= MAX_Y) {
             return true; // Hors limites
@@ -57,6 +77,14 @@ public class Partie {
         // Vérifie si la tuile est une montagne (ou tout autre type inaccessible)
         if (tuile instanceof Montagne) {
             return true; // Inaccessible car montagne
+        }
+        
+        // Vérifie si un soldat allié est déjà sur cette case
+        Joueur joueur = s.getJoueur();
+        for (Soldat soldatAllie : joueur.getSoldats()) {
+            if (soldatAllie.getX() == x && soldatAllie.getY() == y) {
+                return true; // Inaccessible car occupée par un allié
+            }
         }
 
         // Sinon, la tuile est accessible
@@ -150,11 +178,12 @@ public class Partie {
         if (nombreJoueurs < joueurs.length) { // Vérifie s'il reste de la place
             joueurs[nombreJoueurs++] = joueur; // Ajoute le joueur et incrémente le compteur
             System.out.println("Joueur " + joueur.getUtilisateur().getNomUtilisateur() + " ajouté à la partie.");
+            this.notifierJoueurs(joueur.getUtilisateur().getNomUtilisateur() + " à rejoind la partie.", false);
         } else {
             System.out.println("Partie pleine, impossible d'ajouter un autre joueur.");
         }
     }
-
+    
     // Initialise la carte avec des tuiles et attribue des villes et soldats aux joueurs
     public void initialiserCarte() {
         Random rand = new Random(); // Générateur de nombres aléatoires
@@ -196,5 +225,17 @@ public class Partie {
                 }
             }
         }
+    }
+    
+    /**
+     * Permet de notifier tous les joueurs de la partie d'un changement dans le jeu
+     * @param message Le message associé a ce changement
+     * @param plateauChange Indique si le plateau a changer. C'est a dire, indique si une entité a été créée ou déplacé, si une ville a été capturé, etc. 
+     */
+    public void notifierJoueurs(String message, boolean plateauChange) {
+    	for (Joueur joueur : this.getJoueurs()) {
+    		if (joueur != null && joueur.getWebSocket() != null)
+    			joueur.getWebSocket().envoyerMessage(message, plateauChange, ConsoleType.JEUX);
+		}
     }
 }

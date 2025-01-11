@@ -1,0 +1,130 @@
+/* Grille principale */
+table {
+    border-collapse: collapse;
+    margin: auto;
+}
+td {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Tuiles et soldats */
+.tuile {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.ville {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 3px solid transparent; /* Contour par défaut transparent */
+    border-radius: 5px; /* Coins arrondis pour différencier des soldats */
+    z-index: 0; /* Derrière les soldats */
+}
+
+
+.soldat {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 3px solid transparent; /* Contour par défaut transparent */
+    border-radius: 50%; /* Pour un effet arrondi */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Légère ombre pour le contraste */
+    z-index: 2;
+}
+
+.soldat:hover {
+    transform: scale(1.2); /* Agrandit légèrement le soldat */
+    transition: transform 0.2s ease-in-out; /* Animation fluide */
+}
+
+.jeu-container {
+    display: flex; /* Active la disposition en flexbox */
+    flex-direction: row; /* Aligne la grille et la légende côte à côte */
+    align-items: flex-start; /* Aligne les éléments en haut */
+    gap: 20px; /* Espacement entre la grille et la légende */
+    width: 100%; /* Prend toute la largeur disponible */
+}
+
+#grille-container {
+    flex: 3; /* Prend plus de place que la légende */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#legende {
+    flex: 1; /* Prend moins de place */
+    background-color: #f8f9fa; /* Fond léger pour démarquer */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-width: 200px;
+}
+
+.legende-joueur {
+    background-color: var(--couleur-joueur, gray); /* Couleur par défaut */
+    color: white;
+    padding: 5px 10px;
+    margin: 5px auto;
+    width: 150px;
+    text-align: center;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+    #actions-container {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+        background-color: #f9f9f9;
+    }
+
+    #actions-container button {
+        display: block;
+        margin: 5px 0;
+        padding: 8px;
+        background-color: #0074D9;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    #actions-container button:hover {
+        background-color: #0053A4;
+    }
+
+
+/* Console */
+#chat {
+	max-height: 220px;
+  	display: flex;
+  	flex-direction: column;
+}
+#console {
+	background-color: #f4f0ec;
+	border: 1px solid black;
+	padding: 6px;
+	list-style-type: none;
+	overflow: scroll;
+}
+
+#console > li + li {
+	margin-top: 4px;
+}
+
+#console > li.jeux {
+	font-style: italic;
+}

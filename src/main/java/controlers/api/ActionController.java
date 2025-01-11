@@ -10,6 +10,7 @@ import model.*;
 
 import java.io.IOException;
 
+@SuppressWarnings("serial")
 @WebServlet("/api/action")
 public class ActionController extends HttpServlet {
 
@@ -21,6 +22,12 @@ public class ActionController extends HttpServlet {
         // Vérification si l'utilisateur est authentifié
         if (utilisateur == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+        
+        // Vérification de si le joueur a le droit de faire une action
+        if (!utilisateur.getJoueur().getPartie().estTourDe(utilisateur.getJoueur())) {
+        	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 

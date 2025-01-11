@@ -1,14 +1,17 @@
 package model;
 
+import java.util.ArrayList; // Utilisé pour créer une liste dynamique de soldats
 // Importation des bibliothèques nécessaires
 import java.util.List; // Interface pour gérer des collections de soldats
-import java.util.ArrayList; // Utilisé pour créer une liste dynamique de soldats
+
+import controlers.webSocket.ConsoleJeu;
+import jakarta.websocket.Session;
 
 // Définition de la classe Joueur
 public class Joueur {
     // Attributs de la classe
     private int score; // Score du joueur
-    private Object connexionWS; // Objet représentant la connexion WebSocket (non utilisé dans le code)
+    private ConsoleJeu connexionWS; // Objet représentant la connexion WebSocket (non utilisé dans le code)
     private Utilisateur utilisateur; // L'utilisateur associé au joueur
     private Partie partie; // La partie à laquelle le joueur participe
     private List<Soldat> soldats; // Liste des soldats contrôlés par le joueur
@@ -22,8 +25,17 @@ public class Joueur {
         this.soldats = new ArrayList<>(); // Initialise une liste vide de soldats
         this.partie = partie; // Définit la partie à laquelle le joueur participe
         this.PP = 0; // Initialise les points de production à 0
+        this.connexionWS = null;
     }
 
+    public ConsoleJeu getWebSocket() {
+		return this.connexionWS;
+	}
+    
+    public void setWebSocket(ConsoleJeu webSocket) {
+    	this.connexionWS = webSocket;
+    }
+    
     // Getter pour obtenir l'utilisateur associé au joueur
     public Utilisateur getUtilisateur() {
         return utilisateur;
@@ -58,6 +70,7 @@ public class Joueur {
     public List<Soldat> getSoldats() {
         return soldats;
     }
+
 
     // Getter pour les Points de Production (PP)
     public int getPP() {
@@ -102,6 +115,15 @@ public class Joueur {
             this.ajouterSoldat(soldat); // Ajoute le soldat à la liste du joueur
 
             System.out.println("Un soldat a été créé sur la ville " + ville + " pour un coût de 15 PP.");
+
+            this.getPartie().incrementerTour();
+            this.getPartie().notifierJoueurs(
+        		String.format(
+    				"%s a créé un soldat sur une ville contre 15 PP.",
+    				this.getUtilisateur().getNomUtilisateur()
+    			),
+        		true
+        	);
             return true;
         } else {
             System.out.println("Pas assez de PP pour créer un soldat sur cette ville.");
