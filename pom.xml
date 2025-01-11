@@ -7,7 +7,7 @@
     <artifactId>jee-4x-game</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
-
+    <name>app</name>
     <!-- Dependencies -->
     <dependencies>
         <!-- Jakarta Servlet API -->
