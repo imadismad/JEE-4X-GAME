@@ -61,6 +61,7 @@
 
     <!-- Build Configuration -->
     <build>
+        <finalName>app</finalName> <!-- This sets the output file name to app.war -->
         <plugins>
             <!-- Maven Compiler Plugin -->
             <plugin>
