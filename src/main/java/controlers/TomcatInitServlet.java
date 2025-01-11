@@ -1,4 +1,5 @@
 package controlers;
+import utils.PartiesManager;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -15,6 +16,9 @@ public class TomcatInitServlet extends HttpServlet {
 	
 	@Override
 	public void init() throws ServletException {
+
+	    System.out.println("Parties CSV initialized.");
+		
 		super.init();
 		
 		// Initialisation du service de stockage en faisant un accès vers l'instance de stockage à utiliser

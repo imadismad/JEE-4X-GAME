@@ -87,4 +87,9 @@ public class Utilisateur {
     public static boolean nomUtilisateurExiste(String nomUtilisateur) throws StockageAccesException, StockageValeurException, StockageStructureException {
     	return StockageInterface.getInstance().estPresent(TableEnum.UTILISATEUR, UtilisateurStructure.NOM_UTILISATEUR, nomUtilisateur);
     }
+    @Override
+    public String toString() {
+        return this.nomUtilisateur; // Display the username instead of object reference
+    }
+
 }
