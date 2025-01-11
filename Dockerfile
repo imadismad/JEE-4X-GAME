@@ -8,7 +8,7 @@ WORKDIR /usr/local/tomcat
 RUN rm -rf webapps/*
 
 # Copy your WAR file (app.war) to Tomcat's webapps directory
-COPY target/app.war /usr/local/tomcat/webapps/
+COPY target/JEE-4X-GAME.war /usr/local/tomcat/webapps/
 
 # Expose the default Tomcat port
 EXPOSE 8080
