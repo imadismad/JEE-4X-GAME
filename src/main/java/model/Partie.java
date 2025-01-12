@@ -33,6 +33,7 @@ public class Partie {
     }
     
     public void incrementerTour() {
+        this.getJoueurs()[this.tour].incrementerPPParVilles(); // Incrémente les points de production pour les villes du joueur
         this.tour=(this.tour + 1) % this.nombreJoueurs;
     }
 
