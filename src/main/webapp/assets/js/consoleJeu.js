@@ -38,6 +38,8 @@ webSocket.onmessage = (event) => {
 	
 	consoleListe.append(li);
 	
+	consoleListe.scrollTop = consoleListe.scrollHeight;
+	
 	// Si le serveur informe qu'il faut recharger la grille, alors on la recharge
 	if (data.rechargerGrille === true)
 		chargerGrille();
