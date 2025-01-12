@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.*;
+import utils.JSON.*;
 
 import java.io.IOException;
 
@@ -27,7 +28,7 @@ public class ActionController extends HttpServlet {
         
         // Vérification de si le joueur a le droit de faire une action
         if (!utilisateur.getJoueur().getPartie().estTourDe(utilisateur.getJoueur())) {
-        	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
@@ -123,5 +124,8 @@ public class ActionController extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Action non reconnue
                 break;
         }
+
+        // Sinon, retour standard
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 }

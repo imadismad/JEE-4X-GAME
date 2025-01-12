@@ -27,25 +27,57 @@
 	    // 3) Retrieve the array of Joueurs from the partie
 	    Joueur[] joueurs = partie.getJoueurs();
 	%>
-	
-	<div class="partie-container">
-	    <!-- Section Grille -->
-	    <div class="grille-section">
-	        <jsp:include page="/WEB-INF/jsp/partie/affichageGrille.jsp" />
-	    </div>
-	
-	    <!-- Section Chat -->
-	    <div class="chat-section">
-	        <jsp:include page="/WEB-INF/jsp/partie/affichageChat.jsp" />
-	    </div>
-	
-	    <!-- Section Tour -->
-	    <div class="tour-section">
-	        <jsp:include page="/WEB-INF/jsp/partie/affichageTour.jsp" />
+    <%@ include file="/WEB-INF/jsp/templates/header.jsp" %>
+
+    <div class="partie-container">
+		<div id="points-production-container">
+		    <div class="info-section">
+		        <span class="info-label">Points de Production :</span>
+		        <span id="points-production">0</span>
+		    </div>
+		    <hr>
+		    <div class="info-section">
+		        <span class="info-label">Score :</span>
+		        <span id="score">0</span>
+		    </div>
+		</div>
+        <!-- Section Grille -->
+        <div class="grille-section">
+            <jsp:include page="/WEB-INF/jsp/partie/affichageGrille.jsp" />
+        </div>
+
+        <!-- Section Chat -->
+        <div class="chat-section">
+            <jsp:include page="/WEB-INF/jsp/partie/affichageChat.jsp" />
+        </div>
+
+        <!-- Section Tour -->
+        <div class="tour-section">
+            <jsp:include page="/WEB-INF/jsp/partie/affichageTour.jsp" />
+        </div>
+    </div>
+    
+    <div id="ecran-fin" style="display: none;">
+	    <div id="fin-container">
+	        <h2>Fin de la Partie</h2>
+	        <p>Voici les scores finaux :</p>
+	        <table id="tableau-scores">
+	            <thead>
+	                <tr>
+	                    <th>Joueur</th>
+	                    <th>Score</th>
+	                    <th>Points de Production</th>
+	                </tr>
+	            </thead>
+	            <tbody>
+	                <!-- Les scores seront injectés ici -->
+	            </tbody>
+	        </table>
+	        <button id="revenir-accueil">Retour à l'Accueil</button>
 	    </div>
 	</div>
-	
-	<!-- Some JavaScript to load your client logic -->
+
+    <!-- Chargement des scripts JavaScript -->
 	<script>
 		const joueurConnecte = "<%= ((Utilisateur) request.getSession().getAttribute(Utilisateur.CLEF_UTILISATEUR_SESSION)).getNomUtilisateur() %>";
 	</script>

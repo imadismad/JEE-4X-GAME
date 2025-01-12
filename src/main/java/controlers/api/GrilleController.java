@@ -46,6 +46,7 @@ public class GrilleController extends HttpServlet {
                     // Ajouter les informations du propriétaire si c'est une ville
                     if (tuiles[i][j] instanceof Ville) {
                         Ville ville = (Ville) tuiles[i][j];
+                        tuileJSON.ajouter("hp", ville.getDP());
                         if (ville.getAppartenance() != null) {
                             tuileJSON.ajouter("proprietaire", ville.getAppartenance().getUtilisateur().getNomUtilisateur());
                         }
@@ -58,6 +59,7 @@ public class GrilleController extends HttpServlet {
                         soldatJSON.ajouter("joueur", soldat.getJoueur().getUtilisateur().getNomUtilisateur());
                         soldatJSON.ajouter("x", soldat.getX());
                         soldatJSON.ajouter("y", soldat.getY());
+                        soldatJSON.ajouter("hp", soldat.getVie());
                         tuileJSON.ajouter("soldat", soldatJSON);
                     }
 
@@ -73,6 +75,8 @@ public class GrilleController extends HttpServlet {
                 if (joueur != null) {
                     JSONObject joueurJSON = new JSONObject();
                     joueurJSON.ajouter("nom", joueur.getUtilisateur().getNomUtilisateur());
+                    joueurJSON.ajouter("pp", joueur.getPP());
+                    joueurJSON.ajouter("score", joueur.getScore());
                     joueursArray.ajouter(joueurJSON);
                 }
             }

@@ -238,4 +238,5 @@ public class Partie {
     			joueur.getWebSocket().envoyerMessage(message, plateauChange, ConsoleType.JEUX);
 		}
     }
+    
 }

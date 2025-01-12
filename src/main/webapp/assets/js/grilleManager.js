@@ -39,18 +39,47 @@ function afficherGrille(grille) {
             imgTuile.src = `/JEE-4X-GAME/assets/images/tiles/${normalizeType(cell.type)}.png`;
             imgTuile.alt = cell.type;
 
-            // Ajouter une classe supplémentaire si c'est une ville
-            if (cell.type === "Ville") {
-                imgTuile.classList.add("ville");
-                if (cell.proprietaire) {
-                    imgTuile.dataset.joueur = cell.proprietaire; // Ajouter un dataset pour le propriétaire
-                }
-            }
-
             td.appendChild(imgTuile);
+
+            // Ajouter une classe supplémentaire et gestion des villes
+            if (cell.type === "Ville") {
+                const imgVille = document.createElement("img");
+                imgVille.className = "ville";
+                imgVille.src = `/JEE-4X-GAME/assets/images/tiles/${normalizeType(cell.type)}.png`;
+                imgVille.alt = "Ville";
+
+                if (cell.proprietaire) {
+                    imgVille.dataset.joueur = cell.proprietaire; // Ajouter un dataset pour le propriétaire
+                }
+
+                // Ajouter la barre de vie pour les villes
+                if (cell.hp) {
+                    const cityLifeBar = document.createElement("div");
+                    cityLifeBar.className = "city-life-bar";
+
+                    const cityLifeBarFill = document.createElement("div");
+                    cityLifeBarFill.className = "city-life-bar-fill";
+                    cityLifeBarFill.style.width = `${(cell.hp / 15) * 100}%`; // Échelle 0 à 15
+                    cityLifeBar.appendChild(cityLifeBarFill);
+
+                    td.appendChild(cityLifeBar);
+                }
+
+                // Gestion du clic pour les villes appartenant au joueur connecté
+                if (cell.proprietaire && cell.proprietaire === joueurConnecte) {
+                    imgVille.addEventListener("click", () => {
+                        afficherActionsPourTuile(i, j); // Afficher les actions pour cette ville
+                    });
+                }
+
+                td.appendChild(imgVille);
+            }
 
             // Ajouter un soldat s'il est présent
             if (cell.soldat) {
+                const soldierWrapper = document.createElement("div");
+                soldierWrapper.className = "soldier-wrapper"; // Conteneur pour le soldat et la barre de vie
+
                 const imgSoldat = document.createElement("img");
                 imgSoldat.className = "soldat";
                 imgSoldat.src = "/JEE-4X-GAME/assets/images/soldats/soldat.png";
@@ -58,9 +87,20 @@ function afficherGrille(grille) {
                 imgSoldat.dataset.y = cell.soldat.y;
                 imgSoldat.dataset.joueur = cell.soldat.joueur;
                 imgSoldat.alt = "Soldat";
-                td.appendChild(imgSoldat);
 
-                // Ajouter le gestionnaire de clic pour le soldat
+                // Ajouter la barre de vie pour les soldats
+                const lifeBar = document.createElement("div");
+                lifeBar.className = "life-bar";
+                const lifeBarFill = document.createElement("div");
+                lifeBarFill.className = "life-bar-fill";
+                lifeBarFill.style.width = `${(cell.soldat.hp / 15) * 100}%`;
+                lifeBar.appendChild(lifeBarFill);
+
+                soldierWrapper.appendChild(lifeBar);
+                soldierWrapper.appendChild(imgSoldat);
+                td.appendChild(soldierWrapper);
+
+                // Gestion du clic pour les soldats
                 imgSoldat.addEventListener("click", () => {
                     afficherActionsPourSoldat(cell.soldat.x, cell.soldat.y);
                 });
@@ -106,7 +146,17 @@ function mettreAJourLegende(joueurs) {
         joueurElement.style.fontWeight = "bold";
         joueurElement.textContent = joueur.nom;
         legende.appendChild(joueurElement);
+        
+        // Mettre à jour les PP et le score pour le joueur connecté
+        if (joueur.nom === joueurConnecte) {
+            const ppElement = document.getElementById("points-production");
+            const scoreElement = document.getElementById("score");
+            ppElement.textContent = joueur.pp;
+            scoreElement.textContent = joueur.score;
+        }
     });
+    
+    
 
     // Retourner les couleurs pour réutilisation (ex. pour coloriser les soldats)
     return couleurs;
