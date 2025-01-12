@@ -58,6 +58,7 @@ public class GrilleController extends HttpServlet {
                         soldatJSON.ajouter("joueur", soldat.getJoueur().getUtilisateur().getNomUtilisateur());
                         soldatJSON.ajouter("x", soldat.getX());
                         soldatJSON.ajouter("y", soldat.getY());
+                        soldatJSON.ajouter("hp", soldat.getVie());
                         tuileJSON.ajouter("soldat", soldatJSON);
                     }
 

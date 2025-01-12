@@ -50,7 +50,10 @@ function afficherGrille(grille) {
             td.appendChild(imgTuile);
 
             // Ajouter un soldat s'il est présent
-            if (cell.soldat) {
+			if (cell.soldat) {
+                const soldierWrapper = document.createElement("div");
+                soldierWrapper.className = "soldier-wrapper"; // Conteneur pour le soldat et la barre de vie
+
                 const imgSoldat = document.createElement("img");
                 imgSoldat.className = "soldat";
                 imgSoldat.src = "/JEE-4X-GAME/assets/images/soldats/soldat.png";
@@ -58,7 +61,19 @@ function afficherGrille(grille) {
                 imgSoldat.dataset.y = cell.soldat.y;
                 imgSoldat.dataset.joueur = cell.soldat.joueur;
                 imgSoldat.alt = "Soldat";
-                td.appendChild(imgSoldat);
+
+                // Ajouter la barre de vie
+                const lifeBar = document.createElement("div");
+                lifeBar.className = "life-bar";
+                const lifeBarFill = document.createElement("div");
+                lifeBarFill.className = "life-bar-fill";
+                lifeBarFill.style.width = `${(cell.soldat.hp / 15) * 100}%`;
+                lifeBar.appendChild(lifeBarFill);
+
+                // Ajouter les éléments au conteneur
+                soldierWrapper.appendChild(lifeBar);
+                soldierWrapper.appendChild(imgSoldat);
+                td.appendChild(soldierWrapper);
 
                 // Ajouter le gestionnaire de clic pour le soldat
                 imgSoldat.addEventListener("click", () => {

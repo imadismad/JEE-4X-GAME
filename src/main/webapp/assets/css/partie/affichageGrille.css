@@ -49,6 +49,46 @@ td {
     transition: transform 0.2s ease-in-out; /* Animation fluide */
 }
 
+/* Conteneur pour le soldat et sa barre de vie */
+.soldier-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+/* Soldat ajusté à son conteneur */
+.soldier-wrapper .soldat {
+    width: 80%; /* Ajustez selon la taille souhaitée */
+    height: 80%;
+    position: absolute;
+    top: 10%; /* Centrer verticalement dans le conteneur */
+    left: 10%;
+}
+
+/* Barre de vie positionnée au milieu du soldat */
+.life-bar {
+    position: absolute;
+    top: 40%; /* Positionne la barre de vie au milieu du soldat */
+    left: 50%; /* Centre horizontalement */
+    transform: translate(-50%, -50%); /* Centrer précisément */
+    width: 60%; /* Largeur relative à la taille du soldat */
+    height: 5px; /* Hauteur de la barre */
+    background-color: #ddd; /* Fond de la barre de vie */
+    border-radius: 3px; /* Coins arrondis */
+    overflow: hidden;
+    border: 1px solid #666; /* Bordure pour visibilité */
+    z-index: 3; /* Assure que la barre est au-dessus du soldat */
+}
+
+/* Remplissage de la barre de vie */
+.life-bar-fill {
+    height: 100%;
+    background-color: #4caf50; /* Couleur de vie restante (vert) */
+    transition: width 0.3s ease-in-out; /* Animation fluide lors des mises à jour */
+}
+
 .jeu-container {
     display: flex; /* Active la disposition en flexbox */
     flex-direction: row; /* Aligne la grille et la légende côte à côte */
