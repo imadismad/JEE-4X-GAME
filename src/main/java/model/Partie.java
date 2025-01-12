@@ -57,7 +57,7 @@ public class Partie {
     	do {
     		this.tour+=1;
             this.tour=this.tour%this.nombreJoueurs;
-    	} while(tourDepart != this.getTour() && this.getJoueurs()[this.getTour()].hasSoldatsEtVilles());
+    	} while(tourDepart != this.getTour() && !	this.getJoueurs()[this.getTour()].hasSoldatsEtVilles());
         
     }
 
@@ -262,13 +262,13 @@ public class Partie {
      * Cette fonction coupe aussi le lien entre les joueurs et la partie.
      */
     public void notifierFinPartie() {
+    	// Car on est sur que c'est le tour d'un joueur qui peut joueur, si il n'en reste qu'un alors c'est lui le dernier
     	Joueur dernierJoueur = this.getJoueurs()[this.getTour()];
     	dernierJoueur.addScore(100);
-    	String message = "Fin de la partie, victoire de "+dernierJoueur.getUtilisateur().getNomUtilisateur();
-
+    	
     	for (Joueur joueur : this.getJoueurs()) {
     		if (joueur != null && joueur.getWebSocket() != null) {
-				joueur.getWebSocket().envoyerMessage(message, false, ConsoleType.FIN_PARTIE);
+				joueur.getWebSocket().envoyerMessageFin(dernierJoueur);
     			
     		}
     	}

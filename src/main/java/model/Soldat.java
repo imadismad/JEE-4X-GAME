@@ -113,7 +113,7 @@ public class Soldat {
             				soldatCible.getX(),
             				soldatCible.getY()
             			),
-                		dep
+                		false
                 	);
                 } else {
                     System.out.println("Soldat ennemi encore en vie.");
@@ -128,7 +128,7 @@ public class Soldat {
             				soldatCible.getY(),
             				forceAttaque
             			),
-                		dep
+                		true
                 	);
                 }
             } else {
@@ -171,7 +171,7 @@ public class Soldat {
             				ville.getX(),
             				ville.getY()
             			),
-                		dep
+                		false
                 	);
                 } else {
                     System.out.println("Points de Défense restants : " + ville.getDP());
@@ -186,7 +186,7 @@ public class Soldat {
             				ville.getY(),
             				forceAttaqueVille
             			),
-                		dep
+                		true
                 	);
                 }
             } else {
@@ -207,7 +207,7 @@ public class Soldat {
     				this.getX(),
     				this.getY()
     			),
-        		dep
+        		true
         	);
         }
     }

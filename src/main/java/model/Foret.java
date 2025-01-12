@@ -37,7 +37,7 @@ public class Foret extends Tuile {
 					soldat.getX(),
 					soldat.getY()
 				),
-				false
+				true
 			);
     	} else {
     		// Si la tuile n'est pas une forêt, informe que le défrichage n'est pas possible
