@@ -60,7 +60,7 @@ public class Creation extends HttpServlet {
 			request.getSession().setAttribute(Utilisateur.CLEF_UTILISATEUR_SESSION, new Utilisateur(nomUtilisateur, null));
 	        
 	        // Redirection
-	        response.sendRedirect(getServletContext().getContextPath() + "/test/simulerPartie");
+	        response.sendRedirect(getServletContext().getContextPath() + "/lobby/enterCode");
         
 		} catch (StockageAccesException | StockageValeurException | StockageStructureException e) {
 			throw new ServletException("Erreur survenu lors de l'accès au système de sotckage", e);

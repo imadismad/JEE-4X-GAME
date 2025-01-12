@@ -11,6 +11,7 @@ import model.Joueur;
 import model.Partie;
 import model.Soldat;
 import model.Tuile;
+import model.Utilisateur;
 import model.Ville;
 
 @SuppressWarnings("serial")
@@ -22,15 +23,18 @@ public class ActionPossibleController extends HttpServlet {
 	    response.setContentType("application/json");
 
 	    // Vérification de l'authentification
-	    Joueur joueur = (Joueur) request.getSession().getAttribute("joueur");
-	    if (joueur == null) {
+	    Utilisateur utilisateur = Utilisateur.getUtilisateur(request.getSession());
+	    
+	    if (utilisateur == null) {
 	        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
 	        response.getWriter().write("{\"error\": \"Utilisateur non authentifié.\"}");
 	        return;
 	    }
+	    Joueur joueur = utilisateur.getJoueur();
 
 	    // Vérification que le joueur est dans une partie
-	    Partie partie = joueur.getPartie();
+	    Partie partie = joueur == null ? null : joueur.getPartie();
+
 	    if (partie == null) {
 	        response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 Forbidden
 	        response.getWriter().write("{\"error\": \"Vous n'êtes pas dans une partie.\"}");
