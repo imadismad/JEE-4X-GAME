@@ -27,8 +27,6 @@
 	    // 3) Retrieve the array of Joueurs from the partie
 	    Joueur[] joueurs = partie.getJoueurs();
 	%>
-    <%@ include file="/WEB-INF/jsp/templates/header.jsp" %>
-
     <div class="partie-container">
 		<div id="points-production-container">
 		    <div class="info-section">
