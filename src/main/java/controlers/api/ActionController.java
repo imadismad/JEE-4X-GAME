@@ -125,36 +125,6 @@ public class ActionController extends HttpServlet {
                 break;
         }
 
-        // Vérification si la partie est terminée
-        if (partie.isPartieTerminee()) {
-            Joueur gagnant = partie.getGagnant();
-
-            // Préparer la réponse JSON pour l'écran de fin
-            JSONObject resultatFin = new JSONObject();
-            JSONArray scores = new JSONArray();
-
-            for (Joueur joueurPartie : partie.getJoueurs()) {
-                if (joueurPartie != null) {
-                    JSONObject joueurJSON = new JSONObject();
-                    joueurJSON.ajouter("nom", joueurPartie.getUtilisateur().getNomUtilisateur());
-                    joueurJSON.ajouter("score", joueurPartie.getScore());
-                    joueurJSON.ajouter("pp", joueurPartie.getPP());
-                    scores.ajouter(joueurJSON);
-                }
-            }
-
-            if (gagnant != null) {
-                resultatFin.ajouter("gagnant", gagnant.getUtilisateur().getNomUtilisateur());
-            } else {
-                resultatFin.ajouter("gagnant", "Aucun"); // Pas de gagnant
-            }
-            resultatFin.ajouter("scores", scores);
-
-            response.setContentType("application/json");
-            response.getWriter().write(resultatFin.toString());
-            return;
-        }
-
         // Sinon, retour standard
         response.setStatus(HttpServletResponse.SC_OK);
     }
