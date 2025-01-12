@@ -39,30 +39,44 @@ function afficherGrille(grille) {
             imgTuile.src = `/JEE-4X-GAME/assets/images/tiles/${normalizeType(cell.type)}.png`;
             imgTuile.alt = cell.type;
 
-            // Ajouter une classe supplémentaire si c'est une ville
+            td.appendChild(imgTuile);
+
+            // Ajouter une classe supplémentaire et gestion des villes
             if (cell.type === "Ville") {
-                imgTuile.classList.add("ville");
+                const imgVille = document.createElement("img");
+                imgVille.className = "ville";
+                imgVille.src = `/JEE-4X-GAME/assets/images/tiles/${normalizeType(cell.type)}.png`;
+                imgVille.alt = "Ville";
+
                 if (cell.proprietaire) {
-                    imgTuile.dataset.joueur = cell.proprietaire; // Ajouter un dataset pour le propriétaire
+                    imgVille.dataset.joueur = cell.proprietaire; // Ajouter un dataset pour le propriétaire
                 }
+
+                // Ajouter la barre de vie pour les villes
                 if (cell.hp) {
                     const cityLifeBar = document.createElement("div");
                     cityLifeBar.className = "city-life-bar";
 
                     const cityLifeBarFill = document.createElement("div");
                     cityLifeBarFill.className = "city-life-bar-fill";
-                    cityLifeBarFill.style.width = `${(cell.hp / 15) * 100}%`; // Échelle de 0 à 15
+                    cityLifeBarFill.style.width = `${(cell.hp / 15) * 100}%`; // Échelle 0 à 15
                     cityLifeBar.appendChild(cityLifeBarFill);
 
-                    // Ajouter la barre de vie en bas de la ville
                     td.appendChild(cityLifeBar);
                 }
+
+                // Gestion du clic pour les villes appartenant au joueur connecté
+                if (cell.proprietaire && cell.proprietaire === joueurConnecte) {
+                    imgVille.addEventListener("click", () => {
+                        afficherActionsPourTuile(i, j); // Afficher les actions pour cette ville
+                    });
+                }
+
+                td.appendChild(imgVille);
             }
 
-            td.appendChild(imgTuile);
-
             // Ajouter un soldat s'il est présent
-			if (cell.soldat) {
+            if (cell.soldat) {
                 const soldierWrapper = document.createElement("div");
                 soldierWrapper.className = "soldier-wrapper"; // Conteneur pour le soldat et la barre de vie
 
@@ -74,7 +88,7 @@ function afficherGrille(grille) {
                 imgSoldat.dataset.joueur = cell.soldat.joueur;
                 imgSoldat.alt = "Soldat";
 
-                // Ajouter la barre de vie
+                // Ajouter la barre de vie pour les soldats
                 const lifeBar = document.createElement("div");
                 lifeBar.className = "life-bar";
                 const lifeBarFill = document.createElement("div");
@@ -82,12 +96,11 @@ function afficherGrille(grille) {
                 lifeBarFill.style.width = `${(cell.soldat.hp / 15) * 100}%`;
                 lifeBar.appendChild(lifeBarFill);
 
-                // Ajouter les éléments au conteneur
                 soldierWrapper.appendChild(lifeBar);
                 soldierWrapper.appendChild(imgSoldat);
                 td.appendChild(soldierWrapper);
 
-                // Ajouter le gestionnaire de clic pour le soldat
+                // Gestion du clic pour les soldats
                 imgSoldat.addEventListener("click", () => {
                     afficherActionsPourSoldat(cell.soldat.x, cell.soldat.y);
                 });

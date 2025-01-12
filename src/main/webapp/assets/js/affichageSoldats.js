@@ -43,6 +43,49 @@ function afficherActionsPourSoldat(x, y) {
         });
 }
 
+function afficherActionsPourTuile(x, y) {
+    fetch(`/JEE-4X-GAME/api/actionPossible?x=${x}&y=${y}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Erreur API: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(actions => {
+            const actionsContainer = document.getElementById("actions-container");
+            actionsContainer.innerHTML = ""; // Vider le panneau d'actions
+
+            let actionsDisponibles = false;
+
+            // Ajouter des boutons pour chaque action disponible
+            Object.entries(actions).forEach(([action, disponible]) => {
+                if (disponible) {
+                    actionsDisponibles = true;
+                    const bouton = document.createElement("button");
+                    bouton.textContent = action;
+
+                    // Gestion des clics pour l'action
+                    bouton.addEventListener("click", () => {
+                        if (action === "recruter") {
+                            effectuerActionVille(x, y, "CREER_SOLDAT");
+                        } else {
+                            effectuerAction(x, y, action);
+                        }
+                    });
+
+                    actionsContainer.appendChild(bouton);
+                }
+            });
+
+            if (!actionsDisponibles) {
+                actionsContainer.innerHTML = "<p>Aucune action disponible.</p>";
+            }
+        })
+        .catch(error => {
+            console.error("Erreur lors de la récupération des actions possibles :", error);
+        });
+}
+
 function effectuerAction(x, y, action, direction = null) {
     if (actionOk !== true) return; // Vérification de l'état de l'action
     const params = new URLSearchParams({ x, y, action });
@@ -84,6 +127,32 @@ function effectuerAction(x, y, action, direction = null) {
         })
         .catch(error => {
             console.error(`Erreur lors de l'exécution de l'action : ${error.message}`);
+        });
+}
+
+function effectuerActionVille(x, y, action) {
+    const params = new URLSearchParams({ x, y, action });
+
+    fetch(`/JEE-4X-GAME/api/action?${params.toString()}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Erreur API: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === "success") {
+                chargerGrille(); // Recharger la grille pour afficher les modifications
+                const actionsContainer = document.getElementById("actions-container");
+                if (actionsContainer) {
+                    actionsContainer.innerHTML = ""; // Vider le panneau d'actions
+                }
+            } else {
+                console.warn("Action pour la ville échouée :", data);
+            }
+        })
+        .catch(error => {
+            console.error(`Erreur lors de l'exécution de l'action pour la ville : ${error.message}`);
         });
 }
 
@@ -198,11 +267,11 @@ function appliquerColorisationVilles(couleurs) {
     document.querySelectorAll(".ville").forEach(ville => {
         const joueur = ville.dataset.joueur ? ville.dataset.joueur.trim() : null;
         if (joueur && joueur in couleurs) {
-            ville.style.borderColor = couleurs[joueur]; // Applique la couleur du propriétaire
-            ville.style.boxShadow = `0 0 10px ${couleurs[joueur]}`; // Ajoute une ombre colorée pour plus de visibilité
+            ville.style.borderColor = couleurs[joueur]; // Appliquer la couleur du propriétaire
+            ville.style.boxShadow = `0 0 10px ${couleurs[joueur]}`; // Ombre colorée pour visibilité
         } else {
             console.warn(`Aucune couleur définie pour le joueur : ${joueur}`);
-            ville.style.borderColor = "gray"; // Couleur par défaut si pas de propriétaire
+            ville.style.borderColor = "gray"; // Couleur par défaut
         }
     });
 }

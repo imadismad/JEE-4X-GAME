@@ -282,4 +282,14 @@ public class Partie {
         return dernierJoueurActif;
     }
     
+    /**
+     * Vérifie si un joueur est éliminé (aucun soldat ni ville).
+     *
+     * @param joueur Le joueur à vérifier.
+     * @return true si le joueur est éliminé, false sinon.
+     */
+    public boolean estElimine(Joueur joueur) {
+        return joueur == null || !joueur.hasSoldatsEtVilles();
+    }
+    
 }
