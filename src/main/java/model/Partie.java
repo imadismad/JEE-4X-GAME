@@ -55,10 +55,11 @@ public class Partie {
     	int tourDepart = this.getTour();
     	
     	do {
-    		this.tour+=1;
-            this.tour=this.tour%this.nombreJoueurs;
+    		this.tour=(this.tour + 1) % this.nombreJoueurs;
     	} while(tourDepart != this.getTour() && !	this.getJoueurs()[this.getTour()].hasSoldatsEtVilles());
         
+        this.getJoueurs()[this.tour].incrementerPPParVilles(); // Incrémente les points de production pour les villes du joueur
+
     }
 
     // Getter pour obtenir le tableau des joueurs

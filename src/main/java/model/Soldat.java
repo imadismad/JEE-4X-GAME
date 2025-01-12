@@ -64,6 +64,7 @@ public class Soldat {
     public void deplacer(Direction direction) {
         int nx = x, ny = y; // Variables pour les nouvelles coordonnées
         boolean dep = true; // Indique si le déplacement est possible
+        boolean incr = false;
 
         // Calcul des nouvelles coordonnées en fonction de la direction
         switch (direction) {
@@ -117,6 +118,7 @@ public class Soldat {
                 	);
                 } else {
                     System.out.println("Soldat ennemi encore en vie.");
+                    incr=true;
                     dep = false; // Annule le déplacement
                     
                     this.getPartie().notifierJoueurs(
@@ -175,6 +177,7 @@ public class Soldat {
                 	);
                 } else {
                     System.out.println("Points de Défense restants : " + ville.getDP());
+                    incr=true;
                     dep = false; // Annule le déplacement
                     
                     this.getPartie().notifierJoueurs(
@@ -193,6 +196,10 @@ public class Soldat {
                 System.out.println("Ville alliée détectée. Pas d'attaque possible.");
             }
         }
+        
+    	if (incr==true && dep==false) {
+    		this.getPartie().incrementerTour();
+    	}
 
         // Si le déplacement est autorisé, met à jour les coordonnées
         if (dep) {
