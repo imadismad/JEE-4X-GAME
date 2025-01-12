@@ -51,7 +51,7 @@ public class CSVStockage implements StockageInterface {
 		final File dossierStockage = new File(CHEMIN_STOCKAGE);
 		if (!dossierStockage.exists())
 			dossierStockage.mkdirs();
-
+		System.out.println("[CSVStockage] Storing CSV in: " + FICHIER_UTILISATEUR.getAbsolutePath());
 		initCSV(FICHIER_UTILISATEUR, TableEnum.UTILISATEUR);
 	}
 	
