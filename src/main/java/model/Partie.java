@@ -1,11 +1,20 @@
 package model;
 
 import java.util.ArrayList; // Utilisé pour gérer une liste dynamique de soldats
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List; // Interface pour gérer des collections de soldats
+import java.util.Map;
 // Importation des bibliothèques nécessaires
 import java.util.Random; // Utilisé pour générer des nombres aléatoires
 
 import controlers.webSocket.ConsoleJeu.ConsoleType;
+import model.storage.StockageInterface;
+import model.storage.exception.StockageAccesException;
+import model.storage.exception.StockageStructureException;
+import model.storage.structure.ScoresStructure;
+import model.storage.structure.StructureInterface;
+import model.storage.structure.TableEnum;
 
 // Définition de la classe Partie
 public class Partie {
@@ -19,6 +28,8 @@ public class Partie {
     private int nombreJoueurs; // Nombre actuel de joueurs dans la partie
     
     private boolean estFin = false;
+    
+    private PartieObserver observer = null;
     
     //Attribut sur le tour
     public int tour;
@@ -273,5 +284,35 @@ public class Partie {
     			
     		}
     	}
+    	
+    	if (this.observer != null)
+    		observer.onFin(this);
+    	
+    	// On ajoute le score dans la BDD
+    	try {
+			StockageInterface bdd = StockageInterface.getInstance();
+			String date = (new Date()).toString();
+			for (Joueur joueur : joueurs) {
+				if (joueur != null) {
+					Map<StructureInterface, Object> map = new HashMap();
+					map.put(ScoresStructure.UTILISATEUR, joueur.getUtilisateur().getNomUtilisateur());
+					map.put(ScoresStructure.DATE, date);
+					map.put(ScoresStructure.SCORE, joueur.getScore());
+					map.put(ScoresStructure.VICTOIRE, joueur == dernierJoueur);
+					bdd.ajouterValeur(TableEnum.SCORES, map);
+				}
+			}
+		} catch (StockageStructureException | StockageAccesException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
+    
+    /**
+     * Permet de spécifier une classe a appelé en cas de fin de la partie
+     * @param observer L'observer de la partie
+     */
+    public void setObserver(PartieObserver observer) {
+    	this.observer = observer;
+    }
 }

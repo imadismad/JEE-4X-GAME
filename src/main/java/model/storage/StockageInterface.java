@@ -1,11 +1,13 @@
 package model.storage;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import model.storage.exception.StockageAccesException;
 import model.storage.exception.StockageStructureException;
 import model.storage.exception.StockageValeurException;
+import model.storage.structure.ScoresStructure;
 import model.storage.structure.StructureInterface;
 import model.storage.structure.TableEnum;
 
@@ -15,7 +17,7 @@ import model.storage.structure.TableEnum;
  *
  */
 public interface StockageInterface {
-		
+	
 	/**
 	 * Méthode vérifiant si une valeur existe déjà dans une table donnée
 	 * @param table La table dans la quelle on doit chercher
@@ -46,7 +48,7 @@ public interface StockageInterface {
 	 * @throws IllegalArgumentException Levé si un champ n'a pas le bon type, ou s'il n'est pas dans la table
 	 */
 	List<Map<StructureInterface, Object>> getToutesEntrees(TableEnum table, Map<StructureInterface, Object> valeurs) throws StockageAccesException, StockageValeurException, IllegalArgumentException;
-
+	
 	/**
 	 * Méthode qui récupère la premières valeur correspondante aux données d'entrée passé en paramètre.
 	 * valeurs contient pour chaque champs d'une table, les valeurs attendues
@@ -71,5 +73,16 @@ public interface StockageInterface {
 	 */
 	public static StockageInterface getInstance() throws StockageStructureException, StockageAccesException {
 		return CSVStockage.getInstance();
+	}
+	
+	/**
+	 * Permet de récupérer une map pour filtrer la liste des scores d'un utilisateur
+	 * @param nomUtilisateur Le nom de l'utilisateur
+	 * @return Un filtre pour la liste des utilisateurs
+	 */
+	public static Map<StructureInterface, Object> filtreScoresUtilisateur(String nomUtilisateur) {
+		Map<StructureInterface, Object> map = new HashMap<StructureInterface, Object>();
+		map.put(ScoresStructure.UTILISATEUR, nomUtilisateur);
+		return map;
 	}
 }
