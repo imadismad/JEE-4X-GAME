@@ -238,4 +238,48 @@ public class Partie {
     			joueur.getWebSocket().envoyerMessage(message, plateauChange, ConsoleType.JEUX);
 		}
     }
+    
+    /**
+     * Vérifie si la partie est terminée.
+     *
+     * @return true si la partie est terminée, sinon false.
+     */
+    public boolean isPartieTerminee() {
+        int joueursActifs = 0;
+
+        // Compte le nombre de joueurs qui ont encore des soldats ou des villes
+        for (Joueur joueur : joueurs) {
+            if (joueur != null && joueur.hasSoldatsEtVilles()) {
+                joueursActifs++;
+            }
+        }
+
+        // La partie est terminée s'il reste un seul joueur actif ou aucun
+        return joueursActifs <= 1;
+    }
+    
+    /**
+     * Retourne le joueur gagnant.
+     *
+     * @return Le joueur gagnant s'il y en a un, sinon null.
+     */
+    public Joueur getGagnant() {
+        Joueur dernierJoueurActif = null;
+
+        // Cherche le dernier joueur actif
+        for (Joueur joueur : joueurs) {
+            if (joueur != null && joueur.hasSoldatsEtVilles()) {
+                if (dernierJoueurActif == null) {
+                    dernierJoueurActif = joueur;
+                } else {
+                    // Si plusieurs joueurs actifs, pas encore de gagnant
+                    return null;
+                }
+            }
+        }
+
+        // Retourne le dernier joueur actif ou null s'il n'y en a aucun
+        return dernierJoueurActif;
+    }
+    
 }

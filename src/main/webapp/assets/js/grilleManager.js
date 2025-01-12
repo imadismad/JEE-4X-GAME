@@ -45,6 +45,18 @@ function afficherGrille(grille) {
                 if (cell.proprietaire) {
                     imgTuile.dataset.joueur = cell.proprietaire; // Ajouter un dataset pour le propriétaire
                 }
+                if (cell.hp) {
+                    const cityLifeBar = document.createElement("div");
+                    cityLifeBar.className = "city-life-bar";
+
+                    const cityLifeBarFill = document.createElement("div");
+                    cityLifeBarFill.className = "city-life-bar-fill";
+                    cityLifeBarFill.style.width = `${(cell.hp / 15) * 100}%`; // Échelle de 0 à 15
+                    cityLifeBar.appendChild(cityLifeBarFill);
+
+                    // Ajouter la barre de vie en bas de la ville
+                    td.appendChild(cityLifeBar);
+                }
             }
 
             td.appendChild(imgTuile);
@@ -121,7 +133,17 @@ function mettreAJourLegende(joueurs) {
         joueurElement.style.fontWeight = "bold";
         joueurElement.textContent = joueur.nom;
         legende.appendChild(joueurElement);
+        
+        // Mettre à jour les PP et le score pour le joueur connecté
+        if (joueur.nom === joueurConnecte) {
+            const ppElement = document.getElementById("points-production");
+            const scoreElement = document.getElementById("score");
+            ppElement.textContent = joueur.pp;
+            scoreElement.textContent = joueur.score;
+        }
     });
+    
+    
 
     // Retourner les couleurs pour réutilisation (ex. pour coloriser les soldats)
     return couleurs;
