@@ -281,3 +281,32 @@ td {
 #revenir-accueil:hover {
     background-color: #0053A4;
 }
+
+#chat-input-container {
+    display: flex;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+#chat-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#chat-send-button {
+    padding: 8px 12px;
+    background-color: #0074D9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#chat-send-button:hover {
+    background-color: #0053A4;
+}
+
