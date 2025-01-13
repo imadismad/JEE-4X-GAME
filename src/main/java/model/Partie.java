@@ -262,6 +262,18 @@ public class Partie {
      * @param message Le message associé a ce changement
      * @param plateauChange Indique si le plateau a changer. C'est a dire, indique si une entité a été créée ou déplacé, si une ville a été capturé, etc. 
      */
+    public void notifierJoueurs(String[] message, boolean plateauChange) {
+    	for (Joueur joueur : this.getJoueurs()) {
+    		if (joueur != null && joueur.getWebSocket() != null)
+    			joueur.getWebSocket().envoyerMessage(message, plateauChange, ConsoleType.JEUX);
+		}
+    }
+    
+    /**
+     * Permet de notifier tous les joueurs de la partie d'un changement dans le jeu
+     * @param message Le message associé a ce changement
+     * @param plateauChange Indique si le plateau a changer. C'est a dire, indique si une entité a été créée ou déplacé, si une ville a été capturé, etc. 
+     */
     public void notifierJoueurs(String message, boolean plateauChange) {
     	for (Joueur joueur : this.getJoueurs()) {
     		if (joueur != null && joueur.getWebSocket() != null)
