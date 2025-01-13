@@ -13,10 +13,9 @@ const emplacementTour = document.getElementById("emplacement-joueur");
 const pseudo = emplacementTour.dataset.nomJoueur;
 
 webSocket.onmessage = (event) => {
-	console.log("MESSAGE")
 	/**
 	 * @type {{
-	 * 	type: "JEUX"|"CHAT"";
+	 * 	type: "JEUX"|"CHAT"|"FIN_PARTIE";
 	 * 	message : string
 	 *  rechargerGrille: boolean
 	 *  tourDe: string | false
@@ -26,6 +25,12 @@ webSocket.onmessage = (event) => {
 	
 	const li = document.createElement("li");
 	li.innerText = data.message;
+	
+	if (data.type == "FIN_PARTIE") {
+		// Fin de la partie, on affiche l'écran de fin
+		afficherEcranDeFin(data);
+		return;
+	}
 	
 	if (data.type === "JEUX") {
 		li.classList.add("jeux");
@@ -48,7 +53,16 @@ webSocket.onmessage = (event) => {
 	}
 }
 
-webSocket.onopen = () => {
-	webSocket.send("Ouioui baguette");
+/**
+ * Fonction qui permet d'envoyer un message à tous les utilisateurs
+ */
+function envoyerMessage() {
+	/**
+	 * Chaine de caratère représentant ce qu'a tapé l'utilisateur
+	 * Il faut l'envoyer tel quel au serveur, il s'occupera de la renvoyer à tous les utilisateurs (nous compris)
+	 * @type string
+	 */
+	msg = ""; // Méthode de récupération du message à implémenter
+	webSocket.send(msg);
 }
 	

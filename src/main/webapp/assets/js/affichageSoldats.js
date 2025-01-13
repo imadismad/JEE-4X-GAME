@@ -131,6 +131,7 @@ function effectuerAction(x, y, action, direction = null) {
 }
 
 function effectuerActionVille(x, y, action) {
+	if (actionOk !== true) return; // Vérification de l'état de l'action
     const params = new URLSearchParams({ x, y, action });
 
     fetch(`/JEE-4X-GAME/api/action?${params.toString()}`)

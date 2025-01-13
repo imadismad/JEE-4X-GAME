@@ -45,6 +45,12 @@ public class PartiePrincipale extends HttpServlet {
                                "No active game found for code: " + gameCode);
             return;
         }
+        
+        if (utilisateur.getJoueur().getPartie().estFin()) {
+        	response.setStatus(480);
+        	response.getWriter().write("La partie est déjà terminée");
+        	return;
+        }
 
         // 4) Put it into request scope
         request.setAttribute("partie", partie);

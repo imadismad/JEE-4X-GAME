@@ -34,6 +34,7 @@ public class CSVStockage implements StockageInterface {
 	
 	private static final String CHEMIN_STOCKAGE = "stockage";
 	private static final File FICHIER_UTILISATEUR = new File(CHEMIN_STOCKAGE, "utilisateur.csv");
+	private static final File FICHIER_SCORES = new File(CHEMIN_STOCKAGE, "scores.csv");
 	
 	private static String SEPARATEUR = ";";
 	
@@ -53,6 +54,7 @@ public class CSVStockage implements StockageInterface {
 			dossierStockage.mkdirs();
 		System.out.println("[CSVStockage] Storing CSV in: " + FICHIER_UTILISATEUR.getAbsolutePath());
 		initCSV(FICHIER_UTILISATEUR, TableEnum.UTILISATEUR);
+		initCSV(FICHIER_SCORES, TableEnum.SCORES);
 	}
 	
 	@Override
@@ -251,6 +253,7 @@ public class CSVStockage implements StockageInterface {
 	private File getCSVFile(TableEnum table) {
 		return switch (table) {
 			case UTILISATEUR -> FICHIER_UTILISATEUR;
+			case SCORES -> FICHIER_SCORES;
 		};
 	}
 	
@@ -293,7 +296,7 @@ public class CSVStockage implements StockageInterface {
 		StructureInterface[] entete = table.getChamps();
 		String[] nomChamp = Arrays.stream(entete).map((valeur) -> valeur.getValeur()).toArray(String[]::new);
 		
-		if (!CSVStockage.FICHIER_UTILISATEUR.exists()) {
+		if (!csv.exists()) {
 			System.out.println("Création du fichier CSV : " + csv.getAbsolutePath());
 			
 			// Initialisaiton du CSV

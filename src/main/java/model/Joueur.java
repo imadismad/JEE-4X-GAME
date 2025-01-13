@@ -194,4 +194,8 @@ public class Joueur {
         partie.ajouterJoueur(this); // Ajoute le joueur à la partie
         System.out.println(utilisateur.getNomUtilisateur() + " a rejoint la partie.");
     }
+    
+    public void quitterPartie() {
+    	this.partie = null;
+    }
 }

@@ -113,4 +113,11 @@ public class LobbyPartie {
             System.out.println(utilisateur.getNomUtilisateur() + " was not in this lobby.");
         }
     }
+    
+    public void reset() {
+    	for (Utilisateur utilisateur : utilisateurs) {
+    		this.readinessMap.remove(utilisateur);
+		}
+    	this.utilisateurs.removeAll(utilisateurs);
+    }
 }

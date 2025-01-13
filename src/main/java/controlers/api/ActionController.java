@@ -1,15 +1,21 @@
 package controlers.api;
 
+import java.io.IOException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.*;
-import utils.JSON.*;
-
-import java.io.IOException;
+import model.Direction;
+import model.Foret;
+import model.Joueur;
+import model.Partie;
+import model.Soldat;
+import model.Tuile;
+import model.Utilisateur;
+import model.Ville;
 
 @SuppressWarnings("serial")
 @WebServlet("/api/action")
@@ -123,6 +129,20 @@ public class ActionController extends HttpServlet {
             default:
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Action non reconnue
                 break;
+        }
+        
+        // On a fait une action, mais il est possible que cette action est amené à la mort d'un joueur
+        int joueurRestant = 0;
+
+        for (Joueur j : partie.getJoueurs()) {
+            if (j != null && j.hasSoldatsEtVilles()) {
+                joueurRestant +=1; // Compte les joueurs encore actifs
+            }
+        }
+        
+        // Si un seul joueur est encore en vie, la partie se termine
+        if (joueurRestant == 1) {
+            partie.notifierFinPartie();
         }
 
         // Sinon, retour standard

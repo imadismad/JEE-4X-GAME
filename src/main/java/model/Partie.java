@@ -1,11 +1,20 @@
 package model;
 
 import java.util.ArrayList; // Utilisé pour gérer une liste dynamique de soldats
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List; // Interface pour gérer des collections de soldats
+import java.util.Map;
 // Importation des bibliothèques nécessaires
 import java.util.Random; // Utilisé pour générer des nombres aléatoires
 
 import controlers.webSocket.ConsoleJeu.ConsoleType;
+import model.storage.StockageInterface;
+import model.storage.exception.StockageAccesException;
+import model.storage.exception.StockageStructureException;
+import model.storage.structure.ScoresStructure;
+import model.storage.structure.StructureInterface;
+import model.storage.structure.TableEnum;
 
 // Définition de la classe Partie
 public class Partie {
@@ -18,15 +27,30 @@ public class Partie {
     private Tuile[][] tuiles; // Grille représentant les tuiles de la carte
     private int nombreJoueurs; // Nombre actuel de joueurs dans la partie
     
+    private boolean estFin = false;
+    
+    private PartieObserver observer = null;
+    
     //Attribut sur le tour
     public int tour;
 
+    
+    
     // Constructeur par défaut de la classe Partie
     public Partie() {
         this.joueurs = new Joueur[4]; // Initialise le tableau avec un maximum de 4 joueurs
         this.tuiles = new Tuile[MAX_X][MAX_Y]; // Initialise la grille de tuiles
         this.nombreJoueurs = 0; // Initialise le nombre de joueurs à 0
         this.tour = 0;
+    }
+    
+    /**
+     * Permet de savoir si la partie est terminé.
+     * La partie est considéré terminé si la fonction de notification de fin de la partie a été appelé
+     * @return
+     */
+    public boolean estFin() {
+    	return estFin;
     }
     
     //Récupérer le tour
@@ -39,8 +63,14 @@ public class Partie {
     }
     
     public void incrementerTour() {
+    	int tourDepart = this.getTour();
+    	
+    	do {
+    		this.tour=(this.tour + 1) % this.nombreJoueurs;
+    	} while(tourDepart != this.getTour() && !	this.getJoueurs()[this.getTour()].hasSoldatsEtVilles());
+        
         this.getJoueurs()[this.tour].incrementerPPParVilles(); // Incrémente les points de production pour les villes du joueur
-        this.tour=(this.tour + 1) % this.nombreJoueurs;
+
     }
 
     // Getter pour obtenir le tableau des joueurs
@@ -239,4 +269,50 @@ public class Partie {
 		}
     }
     
+    /**
+     * Permet de notifier la fin de la partie à tous les joueurs$
+     * Cette fonction coupe aussi le lien entre les joueurs et la partie.
+     */
+    public void notifierFinPartie() {
+    	// Car on est sur que c'est le tour d'un joueur qui peut joueur, si il n'en reste qu'un alors c'est lui le dernier
+    	Joueur dernierJoueur = this.getJoueurs()[this.getTour()];
+    	dernierJoueur.addScore(100);
+    	
+    	for (Joueur joueur : this.getJoueurs()) {
+    		if (joueur != null && joueur.getWebSocket() != null) {
+				joueur.getWebSocket().envoyerMessageFin(dernierJoueur);
+    			
+    		}
+    	}
+    	
+    	if (this.observer != null)
+    		observer.onFin(this);
+    	
+    	// On ajoute le score dans la BDD
+    	try {
+			StockageInterface bdd = StockageInterface.getInstance();
+			String date = (new Date()).toString();
+			for (Joueur joueur : joueurs) {
+				if (joueur != null) {
+					Map<StructureInterface, Object> map = new HashMap();
+					map.put(ScoresStructure.UTILISATEUR, joueur.getUtilisateur().getNomUtilisateur());
+					map.put(ScoresStructure.DATE, date);
+					map.put(ScoresStructure.SCORE, joueur.getScore());
+					map.put(ScoresStructure.VICTOIRE, joueur == dernierJoueur);
+					bdd.ajouterValeur(TableEnum.SCORES, map);
+				}
+			}
+		} catch (StockageStructureException | StockageAccesException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+    
+    /**
+     * Permet de spécifier une classe a appelé en cas de fin de la partie
+     * @param observer L'observer de la partie
+     */
+    public void setObserver(PartieObserver observer) {
+    	this.observer = observer;
+    }
 }

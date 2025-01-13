@@ -1,5 +1,8 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 // Importation de la bibliothèque Map
 import java.util.Map;
 
@@ -65,6 +68,8 @@ public class Soldat {
         int nx = x, ny = y; // Variables pour les nouvelles coordonnées
         boolean dep = true; // Indique si le déplacement est possible
         boolean incr = false;
+        
+        List<String> log = new ArrayList<>();
 
         // Calcul des nouvelles coordonnées en fonction de la direction
         switch (direction) {
@@ -106,22 +111,21 @@ public class Soldat {
                     soldatCible.getJoueur().retirerSoldat(soldatCible); // Retrait du soldat ennemi
                     this.getJoueur().addScore(10); // Ajout de points pour l'élimination
                     
-                    this.getPartie().notifierJoueurs(
+                    log.add(
                 		String.format(
             				"%s a tué l'unité de %s en (%d, %d), il gagne 10 points.",
             				this.getJoueur().getUtilisateur().getNomUtilisateur(),
             				soldatCible.getJoueur().getUtilisateur().getNomUtilisateur(),
             				soldatCible.getX(),
             				soldatCible.getY()
-            			),
-                		dep
+            			)
                 	);
                 } else {
                     System.out.println("Soldat ennemi encore en vie.");
                     incr=true;
                     dep = false; // Annule le déplacement
                     
-                    this.getPartie().notifierJoueurs(
+                    log.add(
                 		String.format(
             				"%s a attaqué l'unité de %s en (%d, %d) qui a perdu %d point de vie.",
             				this.getJoueur().getUtilisateur().getNomUtilisateur(),
@@ -129,8 +133,7 @@ public class Soldat {
             				soldatCible.getX(),
             				soldatCible.getY(),
             				forceAttaque
-            			),
-                		dep
+            			)
                 	);
                 }
             } else {
@@ -165,31 +168,29 @@ public class Soldat {
                         }
                     }
                     
-                    this.getPartie().notifierJoueurs(
+                    log.add(
                 		String.format(
             				"%s a capturé la ville de %s en (%d, %d), il gagne 50 points.",
             				this.getJoueur().getUtilisateur().getNomUtilisateur(),
             				ancienProprio.getUtilisateur().getNomUtilisateur(),
             				ville.getX(),
             				ville.getY()
-            			),
-                		dep
+            			)
                 	);
                 } else {
                     System.out.println("Points de Défense restants : " + ville.getDP());
                     incr=true;
                     dep = false; // Annule le déplacement
                     
-                    this.getPartie().notifierJoueurs(
+                    log.add(
                 		String.format(
-            				"%s a attaqué la ville de %s en (%d, %d) qui perd %d point de vie.",
-            				this.getJoueur().getUtilisateur().getNomUtilisateur(),
-            				ville.getAppartenance().getUtilisateur().getNomUtilisateur(),
-            				ville.getX(),
-            				ville.getY(),
-            				forceAttaqueVille
-            			),
-                		dep
+	        				"%s a attaqué la ville de %s en (%d, %d) qui perd %d point de vie.",
+	        				this.getJoueur().getUtilisateur().getNomUtilisateur(),
+	        				ville.getAppartenance().getUtilisateur().getNomUtilisateur(),
+	        				ville.getX(),
+	        				ville.getY(),
+	        				forceAttaqueVille
+            			)
                 	);
                 }
             } else {
@@ -207,15 +208,21 @@ public class Soldat {
             this.setY(ny);
             this.getPartie().incrementerTour();
             System.out.println("Soldat déplacé en direction de " + direction + " vers (" + nx + ", " + ny + ")");
-            this.getPartie().notifierJoueurs(
+            
+            log.add(
         		String.format(
     				"%s déplace son unité en (%d, %d).",
     				this.getJoueur().getUtilisateur().getNomUtilisateur(),
     				this.getX(),
     				this.getY()
-    			),
-        		dep
+    			)
         	);
+        }
+        
+        Iterator<String> i = log.iterator();
+        while (i.hasNext()) {
+        	String l = i.next();
+        	this.getPartie().notifierJoueurs(l, !i.hasNext());
         }
     }
 

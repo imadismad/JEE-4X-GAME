@@ -9,6 +9,7 @@ import jakarta.websocket.server.ServerEndpoint;
 import model.Joueur;
 import model.Partie;
 import model.Utilisateur;
+import utils.JSON.JSONArray;
 import utils.JSON.JSONObject;
 
 /**
@@ -23,13 +24,19 @@ import utils.JSON.JSONObject;
 public class ConsoleJeu {
 	
 	public enum ConsoleType {
-		JEUX, CHAT;
+		JEUX, CHAT, FIN_PARTIE;
 	}
 	
 	private static final String CLEF_JSON_TYPE = "type";
 	private static final String CLEF_JSON_MSG = "message";
 	private static final String CLEF_JSON_RECHARG_GRILL = "rechargerGrille";
 	private static final String CLEF_JSON_TOUR_DE = "tourDe";
+	private static final String CLEF_GAGNANT = "gagnant";
+	private static final String CLEF_SCORES = "scores";
+	
+	private static final String CLEF_SCORES_NOM = "nom";
+	private static final String CLEF_SCORES_SCORE = "score";
+	private static final String CLEF_SCORES_PP = "pp";
 
 	private Utilisateur utili;
 	private Session webSocket;
@@ -51,18 +58,56 @@ public class ConsoleJeu {
 	
 	@OnClose
 	public void onClose(Session session) {
-		// TODO Auto-generated method stub
-		this.getUtilisateur().getJoueur().setWebSocket(null);
+		Joueur j = this.getUtilisateur().getJoueur();
+		Partie p = j.getPartie();
+		
+		j.setWebSocket(null);
+		
+		// Si c'est la fin de la partie, le joueur n'a plus de raison de se reconnecter au WebSocket
+		if (p.estFin()) {
+			j.quitterPartie();
+			this.getUtilisateur().setJoueur(null);
+		}
 	}
 	
 	@OnMessage
 	public void OnMessage(String message, Session session) {
+		chatAll(message);		
+	}
+	
+	private void chatAll(String message) {
 		final String chatMsg = getUtilisateur().getNomUtilisateur() + " : " + message;
 		for (Joueur joueur : this.getUtilisateur().getJoueur().getPartie().getJoueurs()) {
 			if (joueur != null && joueur.getWebSocket() != null)
 				joueur.getWebSocket().envoyerMessage(chatMsg, false, ConsoleType.CHAT);
 		}
+	}
+	
+	public void envoyerMessageFin(Joueur gagnant) {
+		Partie partie = this.getUtilisateur().getJoueur().getPartie();
+		JSONObject json = new JSONObject();
+		JSONArray scores = new JSONArray();
+		String message = "Fin de la partie, victoire de "+gagnant.getUtilisateur().getNomUtilisateur();
 		
+		for (Joueur joueur : partie.getJoueurs()) {
+			if (joueur == null) continue;
+			
+			JSONObject sc = new JSONObject();
+			sc.ajouter(CLEF_SCORES_NOM, joueur.getUtilisateur().getNomUtilisateur());
+			sc.ajouter(CLEF_SCORES_SCORE, joueur.getScore());
+			sc.ajouter(CLEF_SCORES_PP, joueur.getPP());
+			
+			scores.ajouter(sc);
+		}
+		
+		json.ajouter(CLEF_JSON_TYPE, ConsoleType.FIN_PARTIE.toString());
+		json.ajouter(CLEF_JSON_MSG, message);
+		json.ajouter(CLEF_JSON_RECHARG_GRILL, false);
+		json.ajouter(CLEF_JSON_TOUR_DE, false);
+		json.ajouter(CLEF_SCORES, scores);
+		json.ajouter(CLEF_GAGNANT, gagnant.getUtilisateur().getNomUtilisateur());
+		
+		getWebSocket().getAsyncRemote().sendText(json.toJSONString());
 	}
 	
 	/**

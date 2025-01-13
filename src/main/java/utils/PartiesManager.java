@@ -106,6 +106,14 @@ public class PartiesManager {
 
         // Store it in memory
         partiesEnCours.put(gameCode, partie);
+        
+        partie.setObserver((p) -> {
+        	System.out.println("Free the lobby");
+        	// Fin de la partie, on libère le lobby
+        	partiesEnCours.remove(gameCode);
+        	lobbies.get(gameCode).reset();
+        	partie.setObserver(null);
+        });
 
         return partie;
     }

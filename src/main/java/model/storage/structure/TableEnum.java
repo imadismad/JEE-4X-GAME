@@ -8,7 +8,8 @@ package model.storage.structure;
  *
  */
 public enum TableEnum {
-	UTILISATEUR("utilisateur", UtilisateurStructure.class);
+	UTILISATEUR("utilisateur", UtilisateurStructure.class),
+	SCORES("scores", ScoresStructure.class);
 	
 	private String valeur;
 	private Class<? extends Enum<? extends StructureInterface>> enumClasse;
