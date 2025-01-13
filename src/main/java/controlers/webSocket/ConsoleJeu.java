@@ -107,7 +107,10 @@ public class ConsoleJeu {
 		json.ajouter(CLEF_SCORES, scores);
 		json.ajouter(CLEF_GAGNANT, gagnant.getUtilisateur().getNomUtilisateur());
 		
-		getWebSocket().getAsyncRemote().sendText(json.toJSONString());
+		// On doit récupérer la session de manière synchrone
+		synchronized (this.webSocket) {
+			this.webSocket.getAsyncRemote().sendText(json.toJSONString());
+		}
 	}
 	
 	/**
