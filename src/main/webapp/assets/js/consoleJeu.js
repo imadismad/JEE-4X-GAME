@@ -38,6 +38,8 @@ webSocket.onmessage = (event) => {
 	
 	consoleListe.append(li);
 	
+	consoleListe.scrollTop = consoleListe.scrollHeight;
+	
 	// Si le serveur informe qu'il faut recharger la grille, alors on la recharge
 	if (data.rechargerGrille === true)
 		chargerGrille();
@@ -57,12 +59,27 @@ webSocket.onmessage = (event) => {
  * Fonction qui permet d'envoyer un message à tous les utilisateurs
  */
 function envoyerMessage() {
-	/**
-	 * Chaine de caratère représentant ce qu'a tapé l'utilisateur
-	 * Il faut l'envoyer tel quel au serveur, il s'occupera de la renvoyer à tous les utilisateurs (nous compris)
-	 * @type string
-	 */
-	msg = ""; // Méthode de récupération du message à implémenter
-	webSocket.send(msg);
+    // Récupérer le message de l'utilisateur
+    const chatInput = document.getElementById("chat-input");
+    const msg = chatInput.value.trim();
+
+    // Si le message est vide, ne rien envoyer
+    if (msg === "") return;
+
+    // Envoyer le message via WebSocket
+    webSocket.send(msg);
+
+    // Réinitialiser le champ de saisie
+    chatInput.value = "";
 }
+
+// Ajouter un événement au bouton d'envoi
+document.getElementById("chat-send-button").addEventListener("click", envoyerMessage);
+
+// Permettre l'envoi du message en appuyant sur "Entrée"
+document.getElementById("chat-input").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        envoyerMessage();
+    }
+});
 	

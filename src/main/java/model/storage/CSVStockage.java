@@ -166,17 +166,24 @@ public class CSVStockage implements StockageInterface {
 	 * @throws StockageValeurException Levé si une des valeurs attendu n'est pas conforme
 	 * @throws StockageAccesException Levé si le fichier CSV ne peut pas être lu
 	 */
-	private Map<StructureInterface, Object> parseLigneSuivante(TableEnum table, LineNumberReader reader) throws StockageValeurException, StockageAccesException {
-		try {
-			String ligne = reader.readLine();
-			if (ligne == null)
-				return null;
-			if (ligne.isEmpty())
-			return parseLigneSuivante(table, reader);
-			return parse(table, ligne);
-		} catch (IOException e) {
-			throw new StockageAccesException("Impossible de lire le fichier CSV", e);
-		}
+	private Map<StructureInterface, Object> parseLigneSuivante(TableEnum table, LineNumberReader reader) 
+	        throws StockageValeurException, StockageAccesException {
+	    try {
+	        String ligne;
+	        while ((ligne = reader.readLine()) != null) {
+	            // Si c'est la première ligne, on la saute
+	            if (reader.getLineNumber() == 1) {
+	                continue;
+	            }
+	            
+	            if (!ligne.isEmpty()) {
+	                return parse(table, ligne);
+	            }
+	        }
+	        return null; // Fin du fichier
+	    } catch (IOException e) {
+	        throw new StockageAccesException("Impossible de lire le fichier CSV", e);
+	    }
 	}
 	
 	/**
@@ -187,41 +194,42 @@ public class CSVStockage implements StockageInterface {
 	 * @throws StockageValeurException Levé si une des valeurs attendu n'est pas conforme
 	 */
 	private Map<StructureInterface, Object> parse(TableEnum table, String ligne) throws StockageValeurException {
-		Map<StructureInterface, Object> donnee = new HashMap<>();
+	    Map<StructureInterface, Object> donnee = new HashMap<>();
 
-		String[] ligneSplit = ligne.split(SEPARATEUR);
-		StructureInterface[] entete = this.getEntete(table);
-		
-		if (ligneSplit.length != entete.length)
-			throw new StockageValeurException("La ligne n'a pas le bon nombre de valeur"); 
-		
-		for (int i = 0; i < entete.length; i++) {		
-			Class<?> typeClasse = entete[i].getTypeClasse();
-			Object valeur;
-			if (typeClasse.equals(String.class)) {
-				valeur = ligneSplit[i];
-			
-			} else if (typeClasse.equals(Integer.class)) {
-				try {
-					valeur = Integer.parseInt(ligneSplit[i]);
-				} catch (NumberFormatException e) {
-					throw new StockageValeurException("La valeur n'est pas de type Integer (" + ligneSplit[i] + ")", e);
-				}
-			} else if (typeClasse.equals(Double.class)) {
-				try {
-					valeur = Double.parseDouble(ligneSplit[i]);
-				} catch (NumberFormatException e) {
-					throw new StockageValeurException("La valeur n'est pas de type Integer (" + ligneSplit[i] + ")", e);
-				}
-			} else {
-				throw new IllegalArgumentException("Le type " + typeClasse + "n'est pas supporté");
-			}
-			
-			donnee.put(entete[i], valeur);
-		}
-		
+	    String[] ligneSplit = ligne.split(SEPARATEUR);
+	    StructureInterface[] entete = this.getEntete(table);
+	    
+	    if (ligneSplit.length != entete.length)
+	        throw new StockageValeurException("La ligne n'a pas le bon nombre de valeur"); 
+	    
+	    for (int i = 0; i < entete.length; i++) {        
+	        Class<?> typeClasse = entete[i].getTypeClasse();
+	        Object valeur;
+	        if (typeClasse.equals(String.class)) {
+	            valeur = ligneSplit[i];
+	        
+	        } else if (typeClasse.equals(Integer.class)) {
+	            try {
+	                valeur = Integer.parseInt(ligneSplit[i]);
+	            } catch (NumberFormatException e) {
+	                throw new StockageValeurException("La valeur n'est pas de type Integer (" + ligneSplit[i] + ")", e);
+	            }
+	        } else if (typeClasse.equals(Double.class)) {
+	            try {
+	                valeur = Double.parseDouble(ligneSplit[i]);
+	            } catch (NumberFormatException e) {
+	                throw new StockageValeurException("La valeur n'est pas de type Double (" + ligneSplit[i] + ")", e);
+	            }
+	        } else if (typeClasse.equals(Boolean.class)) {
+	            valeur = Boolean.parseBoolean(ligneSplit[i]);
+	        } else {
+	            throw new IllegalArgumentException("Le type " + typeClasse + " n'est pas supporté");
+	        }
+	        
+	        donnee.put(entete[i], valeur);
+	    }
 
-		return donnee;
+	    return donnee;
 	}
 	
 	/**

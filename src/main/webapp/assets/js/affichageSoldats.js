@@ -229,9 +229,12 @@ function afficherEcranDeFin(data) {
     replayButton.style.border = "none";
     replayButton.style.borderRadius = "5px";
     replayButton.style.cursor = "pointer";
+
+    // Redirection vers la page de saisie de code pour rejouer
     replayButton.addEventListener("click", () => {
-        window.location.reload(); // Recharger la page pour rejouer
+        window.location.href = "/JEE-4X-GAME/lobby/enterCode"; // Redirection vers l'URL spécifiée
     });
+
     finContainer.appendChild(replayButton);
 
     // Ajouter l'écran de fin au DOM
