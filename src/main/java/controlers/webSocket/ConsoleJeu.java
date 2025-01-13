@@ -91,6 +91,9 @@ public class ConsoleJeu {
 		JSONArray scores = new JSONArray();
 		String message = "Fin de la partie, victoire de "+gagnant.getUtilisateur().getNomUtilisateur();
 		
+		JSONArray messages = new JSONArray();
+		messages.ajouter(message);
+		
 		for (Joueur joueur : partie.getJoueurs()) {
 			if (joueur == null) continue;
 			
@@ -103,7 +106,7 @@ public class ConsoleJeu {
 		}
 		
 		json.ajouter(CLEF_JSON_TYPE, ConsoleType.FIN_PARTIE.toString());
-		json.ajouter(CLEF_JSON_MSG, message);
+		json.ajouter(CLEF_JSON_MSG, messages);
 		json.ajouter(CLEF_JSON_RECHARG_GRILL, false);
 		json.ajouter(CLEF_JSON_TOUR_DE, false);
 		json.ajouter(CLEF_SCORES, scores);
@@ -125,11 +128,17 @@ public class ConsoleJeu {
 	 * @param message Le message associé a l'action d'un joueur
 	 * @param majPlateau true si le plateau doit être mise à jour
 	 */
-	public void envoyerMessage(String message, boolean majPlateau, ConsoleType type) {
+	public void envoyerMessage(String[] message, boolean majPlateau, ConsoleType type) {
 		Partie partie = this.getUtilisateur().getJoueur().getPartie();
 		JSONObject json = new JSONObject();
+		
+		JSONArray jmsg = new JSONArray();
+		for (String msg : message) {
+			jmsg.ajouter(msg);
+		}
+		
 		json.ajouter(CLEF_JSON_TYPE, type.toString());
-		json.ajouter(CLEF_JSON_MSG, message);
+		json.ajouter(CLEF_JSON_MSG, jmsg);
 		json.ajouter(CLEF_JSON_RECHARG_GRILL, majPlateau);
 		if (partie.estTourDe(this.getUtilisateur().getJoueur()))
 			json.ajouter(CLEF_JSON_TOUR_DE, false);
@@ -137,6 +146,10 @@ public class ConsoleJeu {
 			json.ajouter(CLEF_JSON_TOUR_DE, partie.getJoueurs()[partie.getTour()].getUtilisateur().getNomUtilisateur());
 		
 		getWebSocket().getAsyncRemote().sendText(json.toJSONString());
+	}
+	
+	public void envoyerMessage(String message, boolean majPlateau, ConsoleType type) {
+		envoyerMessage(new String[] {message}, majPlateau, type);
 	}
 	
 	private Utilisateur getUtilisateur() {

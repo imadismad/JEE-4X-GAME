@@ -16,15 +16,12 @@ webSocket.onmessage = (event) => {
 	/**
 	 * @type {{
 	 * 	type: "JEUX"|"CHAT"|"FIN_PARTIE";
-	 * 	message : string
+	 * 	message : Array<string>
 	 *  rechargerGrille: boolean
 	 *  tourDe: string | false
 	 * }}
 	 */
 	const data = JSON.parse(event.data);
-	
-	const li = document.createElement("li");
-	li.innerText = data.message;
 	
 	if (data.type == "FIN_PARTIE") {
 		// Fin de la partie, on affiche l'écran de fin
@@ -32,11 +29,16 @@ webSocket.onmessage = (event) => {
 		return;
 	}
 	
-	if (data.type === "JEUX") {
-		li.classList.add("jeux");
-	}
+	data.message.forEach((msg) => {
+		const li = document.createElement("li");
+		li.innerText = data.message;
+		if (data.type === "JEUX") {
+			li.classList.add("jeux");
+		}
 	
 	consoleListe.append(li);
+	});
+	
 	
 	consoleListe.scrollTop = consoleListe.scrollHeight;
 	
