@@ -1,5 +1,7 @@
 package controlers.webSocket;
 
+import java.io.IOException;
+
 import jakarta.websocket.EndpointConfig;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnMessage;
@@ -109,7 +111,12 @@ public class ConsoleJeu {
 		
 		// On doit récupérer la session de manière synchrone
 		synchronized (this.webSocket) {
-			this.webSocket.getAsyncRemote().sendText(json.toJSONString());
+			//this.webSocket.getAsyncRemote().sendText(json.toJSONString());
+			try {
+				this.webSocket.getBasicRemote().sendText(json.toJSONString());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
