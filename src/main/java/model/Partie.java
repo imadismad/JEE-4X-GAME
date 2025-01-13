@@ -286,6 +286,8 @@ public class Partie {
      * Cette fonction coupe aussi le lien entre les joueurs et la partie.
      */
     public void notifierFinPartie() {
+    	this.estFin = true;
+
     	// Car on est sur que c'est le tour d'un joueur qui peut joueur, si il n'en reste qu'un alors c'est lui le dernier
     	Joueur dernierJoueur = this.getJoueurs()[this.getTour()];
     	dernierJoueur.addScore(100);

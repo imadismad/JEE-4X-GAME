@@ -60,6 +60,7 @@ public class ConsoleJeu {
 	
 	@OnClose
 	public void onClose(Session session) {
+		System.out.println(this.getUtilisateur() + " s'est déconnecté du WebSocket");
 		Joueur j = this.getUtilisateur().getJoueur();
 		Partie p = j.getPartie();
 		
@@ -69,6 +70,8 @@ public class ConsoleJeu {
 		if (p.estFin()) {
 			j.quitterPartie();
 			this.getUtilisateur().setJoueur(null);
+		} else {
+			System.out.println("La partie n'était pas terminé");
 		}
 	}
 	

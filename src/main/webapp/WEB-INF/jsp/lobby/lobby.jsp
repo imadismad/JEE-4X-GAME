@@ -70,6 +70,11 @@
                     if (!response.ok) {
                         throw new Error("Failed to refresh lobby state");
                     }
+                    console.log(response);
+                    if(response.redirected === true) {
+                    	window.location.href = response.url;
+                    	return;
+                    }
                     return response.text();
                 })
                 .then(html => {
