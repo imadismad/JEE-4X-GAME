@@ -219,11 +219,8 @@ public class Soldat {
         	);
         }
         
-        Iterator<String> i = log.iterator();
-        while (i.hasNext()) {
-        	String l = i.next();
-        	this.getPartie().notifierJoueurs(l, !i.hasNext());
-        }
+        if(log.size() != 0)
+        	this.getPartie().notifierJoueurs(log.toArray(String[]::new), true);
     }
 
     // Simule une attaque dans une direction donnée
