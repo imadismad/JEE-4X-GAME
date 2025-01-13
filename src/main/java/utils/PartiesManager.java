@@ -36,6 +36,11 @@ public class PartiesManager {
         return lobbies.get(code);
     }
 
+    public static boolean estDansLobby(String gameCode, HttpSession session) {
+    	LobbyPartie lobby = lobbies.get(gameCode);
+    	return lobby.getUtilisateurs().contains(Utilisateur.getUtilisateur(session));
+    }
+    
     public static boolean addUserToLobby(String gameCode, HttpSession session, Utilisateur utilisateur) {
         LobbyPartie lobby = lobbies.get(gameCode);
         if (lobby == null) {

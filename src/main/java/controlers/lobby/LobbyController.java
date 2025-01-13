@@ -41,10 +41,11 @@ public class LobbyController extends HttpServlet {
                 return;
             }
 
-            // Try to join the lobby
-            boolean joined = PartiesManager.addUserToLobby(gameCode, req.getSession(), utilisateur);
-            if (!joined) {
+            // Try to join the lobby only if user already not in
+            if (!PartiesManager.estDansLobby(gameCode, req.getSession()) && !PartiesManager.addUserToLobby(gameCode, req.getSession(), utilisateur)) {
                 req.setAttribute("error", "Cannot join the lobby (already full?).");
+                req.getRequestDispatcher("/WEB-INF/jsp/lobby/enterCode.jsp").forward(req, resp);
+                return;
             }
 
             // Show the lobby page
@@ -63,6 +64,21 @@ public class LobbyController extends HttpServlet {
                 resp.getWriter().write("Lobby not found");
                 return;
             }
+            
+            // Check if everyone is ready AND the lobby is full
+            boolean everyoneIsReady = lobby.allPlayersReady();
+            boolean isLobbyFull = (lobby.getNumberOfJoinedPlayers() == lobby.getMaxJoueurs());
+
+            if (everyoneIsReady && isLobbyFull) {
+                // Launch the game
+                PartiesManager.launchGame(gameCode);
+
+                // Redirect to the game
+                resp.sendRedirect(req.getContextPath() + "/partiePrincipale?gameCode=" + gameCode);
+                
+                return;
+            }
+            
             req.setAttribute("gameCode", gameCode);
             req.setAttribute("lobby", lobby);
             // Partial JSP that refreshes the lobby content
